@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import router from "./router/router";
@@ -36,7 +36,6 @@ function App() {
 
     refreshSession();
 
-    
     const intervalId = setInterval(refreshSession, 45 * 60 * 1000);
 
     return () => clearInterval(intervalId);
