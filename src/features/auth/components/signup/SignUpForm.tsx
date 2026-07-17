@@ -6,11 +6,11 @@ import { signupSchema, type TSignupInput } from "@/features/auth/schemas/signup.
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom"
-import { signUpService } from "../services/signup.services"
+import { signUpService } from "../../services/signup.services"
 import { toast } from "react-toastify"
 import { useState } from "react"
 import { useAppDispatch } from "@/store/hooks"
-import { setCredentials } from "../store/authSlice"
+import { setCredentials } from "../../store/authSlice"
 
 function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -59,7 +59,7 @@ function SignUpForm() {
 
       const result = await signUpService(payload);
       toast.success("Account created successfully!");
-      
+
       if (result && result.access_token) {
         dispatch(
           setCredentials({
