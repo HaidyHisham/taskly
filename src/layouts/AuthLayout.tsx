@@ -14,9 +14,9 @@ export default function AuthLayout({
         </Container>
       </header>
 
-      <main className="w-full flex-grow flex items-stretch md:items-center justify-center md:mb-12">
+      <main className="w-full grow flex items-stretch md:items-center justify-center md:mb-12">
         <div className="w-full min-h-screen md:min-h-0 md:max-w-[576px] bg-background md:bg-white md:border md:border-white md:rounded-8px p-6 md:p-12 md:shadow-lg flex flex-col justify-start md:justify-center">
-          {/* Logo only on mobile */}
+        
           <div className="md:hidden mb-10 mt-2">
             <Logo />
           </div>

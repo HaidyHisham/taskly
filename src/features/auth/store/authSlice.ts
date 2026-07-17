@@ -34,20 +34,21 @@ const authSlice = createSlice({
         user: IUserData;
         accessToken: string;
         refreshToken?: string;
+        rememberMe?: boolean;
       }>
     ) {
-      const { user, accessToken, refreshToken } = action.payload;
+      const { user, accessToken, refreshToken, rememberMe = false } = action.payload;
 
       state.user = user;
       state.token = accessToken;
       state.isAuthenticated = true;
 
-      setUserData(user);
-      setAccessToken(accessToken);
+      setUserData(user, rememberMe);
+      setAccessToken(accessToken, rememberMe);
 
       if (refreshToken) {
         state.refreshToken = refreshToken;
-        setRefreshToken(refreshToken);
+        setRefreshToken(refreshToken, rememberMe);
       }
     },
     logout(state) {

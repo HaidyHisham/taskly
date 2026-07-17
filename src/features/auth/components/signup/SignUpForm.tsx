@@ -6,11 +6,11 @@ import { signupSchema, type TSignupInput } from "@/features/auth/schemas/signup.
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom"
-import { signUpService } from "../services/signup.services"
+import { signUpService } from "../../services/signup.services"
 import { toast } from "react-toastify"
 import { useState } from "react"
 import { useAppDispatch } from "@/store/hooks"
-import { setCredentials } from "../store/authSlice"
+import { setCredentials } from "../../store/authSlice"
 
 function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -59,7 +59,7 @@ function SignUpForm() {
 
       const result = await signUpService(payload);
       toast.success("Account created successfully!");
-      
+
       if (result && result.access_token) {
         dispatch(
           setCredentials({
@@ -71,11 +71,12 @@ function SignUpForm() {
             },
             accessToken: result.access_token,
             refreshToken: result.refresh_token,
+            rememberMe: true,
           })
         );
-        navigate("/");
+        navigate("/project");
       } else {
-        navigate("/sign-in");
+        navigate("/login");
       }
       reset();
 
@@ -161,7 +162,7 @@ function SignUpForm() {
         </div>
         <div className="md:col-span-2 flex justify-center items-center gap-x-2">
           <span className="text-sm text-slate-medium">Already have an account?</span>
-          <Link to="/sign-in" className="text-primary font-semibold">Log in</Link>
+          <Link to="/login" className="text-primary font-semibold">Log in</Link>
         </div>
       </form>
     </>
