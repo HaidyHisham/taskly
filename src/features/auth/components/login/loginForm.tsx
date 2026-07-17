@@ -19,6 +19,7 @@ function LoginForm() {
         handleSubmit,
         control,
         reset,
+        register,
         formState: { errors },
     } = useForm<TLoginInput>({
         resolver: zodResolver(loginSchema),
@@ -26,13 +27,15 @@ function LoginForm() {
         defaultValues: {
             email: '',
             password: '',
+            rememberMe: false,
         },
     });
 
     const onSubmit: SubmitHandler<TLoginInput> = async (formData) => {
         try {
             setIsLoading(true)
-            const result = await loginService(formData);
+            const { rememberMe, ...loginData } = formData;
+            const result = await loginService(loginData);
             toast.success("Welcome back!");
 
             if (result && result.access_token) {
@@ -46,9 +49,10 @@ function LoginForm() {
                         },
                         accessToken: result.access_token,
                         refreshToken: result.refresh_token,
+                        rememberMe: !!rememberMe,
                     })
                 );
-                navigate("/");
+                navigate("/project");
             }
             reset();
 
@@ -95,6 +99,7 @@ function LoginForm() {
                     <label className="flex items-center gap-x-2 text-slate-medium cursor-pointer">
                         <input
                             type="checkbox"
+                            {...register("rememberMe")}
                             className="w-4 h-4 rounded border-slate-light text-primary focus:ring-primary accent-primary"
                         />
                         <span>Remember Me</span>

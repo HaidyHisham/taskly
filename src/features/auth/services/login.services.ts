@@ -9,7 +9,10 @@ export const loginService = async (data: ILogin) => {
       "Content-Type": "application/json",
       apikey: `${API_KEY}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      email: data.email,
+      password: data.password,
+    }),
   });
   const result = await response.json();
   if (!response.ok) {
