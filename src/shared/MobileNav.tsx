@@ -9,14 +9,25 @@ import MembersIcon from "@/assets/icons/Members.svg?react";
 import DetailsIcon from "@/assets/icons/Details.svg?react";
 import LogoIcon from "@/assets/icons/logo.svg?react";
 import BurgerIcon from "@/assets/icons/burger.svg?react";
+import { useAppSelector } from "@/store/hooks";
+
 
 interface MobileHeaderProps {
+  
   onMenuClick?: () => void;
 }
 
 export const MobileHeader: React.FC<MobileHeaderProps> = ({ onMenuClick }) => {
+  const user = useAppSelector((state) => state.auth.user);
+    const displayName = user?.name || "User Name";
+     const getInitials = (name: string): string => {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 0) return "MT";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
   return (
-    <header className="flex h-16 items-center justify-between px-6 border-b border-slate-100 md:hidden shrink-0 bg-[#F4F7FD]">
+    <header className="flex h-16 items-center justify-between px-6 border-b border-black/10 md:hidden shrink-0 bg-[#F9F9FF]">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
@@ -32,7 +43,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({ onMenuClick }) => {
         </div>
       </div>
       <div className="w-9 h-9 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0">
-        MT
+        {getInitials(displayName)}
       </div>
     </header>
   );

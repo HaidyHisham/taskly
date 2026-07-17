@@ -1,41 +1,33 @@
 
-import { useLocation } from 'react-router-dom';
+import { useAppSelector } from "@/store/hooks";
 
 function Navbar() {
-  const location = useLocation();
+ 
+  const user = useAppSelector((state) => state.auth.user);
+  const displayName = user?.name || "User Name";
+  const displayRole = user?.job_title || "Job Title";
 
-  const getPageTitle = (): string => {
-    const currentPath = location.pathname.split("/").pop();
-    switch (currentPath) {
-      case "projects":
-        return "Projects";
-      case "epics":
-        return "Project Epics";
-      case "tasks":
-        return "Project Tasks";
-      case "members":
-        return "Project Members";
-      case "details":
-        return "Project Details";
-      default:
-        return "Dashboard";
-    }
+ 
+  const getInitials = (name: string): string => {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 0) return "MT";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
   return (
-    <header className="hidden md:flex h-16 border-b border-slate-100 px-8 items-center justify-between shrink-0">
-      <h1 className="text-lg font-bold text-slate-dark">{getPageTitle()}</h1>
-      <div className="flex items-center gap-3">
+    <header className="hidden md:flex h-16 bg-background border-b border-black/10 px-6 items-center shrink-0">
+      <div className="flex items-center gap-3 ml-auto">
         <div className="text-right flex flex-col">
           <span className="text-sm font-semibold text-slate-dark leading-tight">
-            Mahmoud Taha
+            {displayName}
           </span>
           <span className="text-[10px] font-bold text-slate-medium uppercase tracking-[0.5px]">
-            PROJECT MANAGER
+            {displayRole}
           </span>
         </div>
         <div className="w-10 h-10 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs uppercase">
-          MT
+          {getInitials(displayName)}
         </div>
       </div>
     </header>

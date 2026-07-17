@@ -64,9 +64,7 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
               }
             >
               <Icon className="w-5 h-5 shrink-0" />
-              <span className={`whitespace-nowrap md:inline ${isCollapsed ? "md:hidden" : ""}`}>
-                {label}
-              </span>
+              {!isCollapsed && <span className="whitespace-nowrap">{label}</span>}
             </NavLink>
           ))}
         </nav>
@@ -91,9 +89,7 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
             className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg text-sm font-semibold"
           >
             <LogoutIcon className="w-5 h-5 shrink-0" />
-            <span className={`whitespace-nowrap md:inline ${isCollapsed ? "md:hidden" : ""}`}>
-              Logout
-            </span>
+            {!isCollapsed && <span className="whitespace-nowrap">Logout</span>}
           </a>
         </div>
       </aside>
