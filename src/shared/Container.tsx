@@ -6,7 +6,7 @@ interface Iprops{
 }
 const Container: React.FC<Iprops> = ({children, className}) => {
     return (
-        <div className={`w-full px-6 ${className}`}>
+        <div className={`w-full px-6  ${className}`}>
             {children}
         </div>
     )

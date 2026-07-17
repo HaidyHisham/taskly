@@ -115,7 +115,7 @@ function SignUpForm() {
 
         />
         <FormField
-          label="Job Title (Optional)"
+          label="Job Title"
           control={control}
           name="data.job_title"
           type="text"
