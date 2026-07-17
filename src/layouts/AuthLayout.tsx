@@ -1,5 +1,5 @@
-import Container from "@/components/Container";
-import Logo from "@/components/Logo";
+import Container from "@/shared/Container";
+import Logo from "@/shared/Logo";
 export default function AuthLayout({
   children,
 }: Readonly<{
