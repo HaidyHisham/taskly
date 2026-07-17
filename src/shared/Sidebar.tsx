@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
 import ProjectsIcon from "@/assets/icons/projects.svg?react";
@@ -6,10 +6,10 @@ import EpicsIcon from "@/assets/icons/Epics.svg?react";
 import TasksIcon from "@/assets/icons/Tasks.svg?react";
 import MembersIcon from "@/assets/icons/Members.svg?react";
 import DetailsIcon from "@/assets/icons/Details.svg?react";
-import LogoutIcon from "@/assets/icons/logout.svg?react";
 import CollapseIcon from "@/assets/icons/Collapse.svg?react";
 import LogoIcon from "@/assets/icons/logo.svg?react";
 import Logo from "./Logo";
+import LogoutBtn from "./LogoutBtn";
 
 interface SidebarProps {
   isMobileOpen: boolean;
@@ -18,6 +18,7 @@ interface SidebarProps {
 
 function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+
   const menuItems = [
     { path: "projects", label: "Projects", Icon: ProjectsIcon },
     { path: "epics", label: "Project Epics", Icon: EpicsIcon },
@@ -35,7 +36,6 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
         />
       )}
 
-     
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex flex-col h-full bg-surface-low border-r border-slate-200 transition-all duration-300 ease-in-out shrink-0 md:static md:translate-x-0 ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
@@ -54,7 +54,7 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
             <NavLink
               key={path}
               to={path}
-              onClick={() => setIsMobileOpen(false)} 
+              onClick={() => setIsMobileOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   isActive
@@ -70,7 +70,6 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
         </nav>
 
         <div className="p-3 border-t border-slate-200">
-         
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-dark hover:bg-slate-light/40 w-full text-left cursor-pointer hidden md:flex"
@@ -83,14 +82,7 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
             {!isCollapsed && <span>Collapse</span>}
           </button>
 
-      
-          <a
-            href="#"
-            className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg text-sm font-semibold"
-          >
-            <LogoutIcon className="w-5 h-5 shrink-0" />
-            {!isCollapsed && <span className="whitespace-nowrap">Logout</span>}
-          </a>
+          <LogoutBtn isCollapsed={isCollapsed} />
         </div>
       </aside>
     </>

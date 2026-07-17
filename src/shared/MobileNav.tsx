@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-
+import { useAppSelector } from "@/store/hooks";
+import LogoutBtn from "./LogoutBtn";
 
 import ProjectsIcon from "@/assets/icons/projects.svg?react";
 import EpicsIcon from "@/assets/icons/Epics.svg?react";
@@ -9,23 +10,24 @@ import MembersIcon from "@/assets/icons/Members.svg?react";
 import DetailsIcon from "@/assets/icons/Details.svg?react";
 import LogoIcon from "@/assets/icons/logo.svg?react";
 import BurgerIcon from "@/assets/icons/burger.svg?react";
-import { useAppSelector } from "@/store/hooks";
-
 
 interface MobileHeaderProps {
-  
   onMenuClick?: () => void;
 }
 
 export const MobileHeader: React.FC<MobileHeaderProps> = ({ onMenuClick }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const user = useAppSelector((state) => state.auth.user);
-    const displayName = user?.name || "User Name";
-     const getInitials = (name: string): string => {
+  const displayName = user?.name || "User Name";
+
+  const getInitials = (name: string): string => {
     const parts = name.trim().split(/\s+/);
     if (parts.length === 0) return "MT";
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
+
   return (
     <header className="flex h-16 items-center justify-between px-6 border-b border-black/10 md:hidden shrink-0 bg-[#F9F9FF]">
       <div className="flex items-center gap-3">
@@ -33,7 +35,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({ onMenuClick }) => {
           onClick={onMenuClick}
           className="text-slate-dark text-2xl p-1 cursor-pointer focus:outline-hidden"
         >
-          <BurgerIcon/>
+          <BurgerIcon />
         </button>
         <div className="flex items-center gap-2">
           <LogoIcon className="w-5 h-5 text-primary" />
@@ -42,8 +44,26 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({ onMenuClick }) => {
           </span>
         </div>
       </div>
-      <div className="w-9 h-9 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0">
-        {getInitials(displayName)}
+
+      <div className="relative">
+        <button
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          className="w-9 h-9 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0 cursor-pointer focus:outline-hidden"
+        >
+          {getInitials(displayName)}
+        </button>
+
+        {isDropdownOpen && (
+          <>
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setIsDropdownOpen(false)}
+            />
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg p-1 z-50">
+              <LogoutBtn />
+            </div>
+          </>
+        )}
       </div>
     </header>
   );
