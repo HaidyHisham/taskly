@@ -2,16 +2,21 @@ import AuthButton from "@/components/AuthButton"
 import FormField from "@/components/FormField"
 import Title from "@/components/Title"
 import PasswordValidations from "@/features/auth/components/PasswordValidations"
-import { signupSchema, type TSignupInput } from "@/features/schemas/signup.schema"
+import { signupSchema, type TSignupInput } from "@/features/auth/schemas/signup.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { Link } from "react-router-dom"
+import { signUpService } from "../services/signup.services"
+import { toast } from "react-toastify"
+import { useState } from "react"
 
 function SignUpForm() {
+  const [isLoading, setIsLoading] = useState(false)
   const {
     handleSubmit,
     control,
     watch,
+    reset,
     formState: { errors },
   } = useForm<TSignupInput>({
     resolver: zodResolver(signupSchema),
@@ -35,8 +40,28 @@ function SignUpForm() {
     watchedPassword
   );
 
-  const onSubmit: SubmitHandler<TSignupInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<TSignupInput> = async(formData) => {
+    try{
+      setIsLoading(true)
+      const payload = {
+        email: formData.email,
+        password:formData.password,
+        data:{
+          name:formData.data.name,
+          department:formData.data.job_title||'',
+        },
+
+      }
+      
+       await signUpService(payload);
+      toast.success("Account created successfully!");
+      reset();
+    
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>
@@ -110,7 +135,7 @@ function SignUpForm() {
           <PasswordValidations label="One special character" isValid={hasSpecialChar} />
         </div>
         <div className="md:col-span-2 flex justify-center">
-          <AuthButton className="py-3.5">Create Account</AuthButton>
+          <AuthButton disabled={isLoading}  className="py-3.5">{isLoading ? "Creating Account..." : "Create Account"}</AuthButton>
         </div>
         <div className="md:col-span-2 flex justify-center items-center gap-x-2">
           <span className="text-sm text-slate-medium">Already have an account?</span>
