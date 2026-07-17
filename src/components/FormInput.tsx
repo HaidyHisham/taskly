@@ -13,14 +13,14 @@ const FormInput: React.FC<IProps> = ({ variant = 'default', showPasswordToggle =
     default:
       'bg-surface-highest focus-within:outline-primary focus-visible:outline-primary',
     error:
-      'bg-error-background focus-within:outline-error-dark focus-visible:outline-error-dark',
+      'bg-error/10 outline outline-1 outline-error focus-within:outline-error focus-visible:outline-error',
   };
 
   const inputVariants = {
     default:
       'bg-surface-highest placeholder:text-secondary-light text-secondary focus-within:outline-primary focus-visible:outline-primary',
     error:
-      'bg-error-background text-error-dark focus-within:outline-error-dark focus-visible:outline-error-dark',
+      'text-error placeholder:text-error/60 focus-within:outline-error focus-visible:outline-error',
   };
 
   return (
