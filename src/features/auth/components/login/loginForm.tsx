@@ -69,6 +69,7 @@ function LoginForm() {
                 <Title
                     title="Welcome back"
                     description="Enter your credentials to access your workspace."
+                    className="max-w-full"
 
                 />
             </div>

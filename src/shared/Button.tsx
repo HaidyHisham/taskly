@@ -1,25 +1,28 @@
-import React, { type ButtonHTMLAttributes } from "react";
+import React, {type ButtonHTMLAttributes } from 'react';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "ghost";
+interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'tertiay';
   children: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({
-  variant = "primary",
+const Button: React.FC<IProps> = ({
   children,
+  variant = 'primary',
   ...props
 }) => {
   const btnVariants = {
-    primary: "text-white rounded-4px primary-gradient shadow-sm font-semibold",
-    secondary: "text-primary font-semibold",
-    ghost: "text-slate-md/60 font-medium",
+    primary:
+      'text-white rounded-4px primary-gradient shadow-primary font-semibold disabled:opacity-70',
+    secondary:
+      'text-primary [&>*]:text-primary font-semibold disabled:text-secondary-light disabled:[&>*]:text-secondary-light ',
+    ghost: 'text-slate-md/60 font-medium disabled:opacity-70',
+    tertiay:
+      'bg-surface-low text-primary disabled:text-secondary-light rounded-4px font-semibold gap-8px',
   };
-
   return (
     <button
       {...props}
-      className={`w-full px-6 py-2.5 text-body leading-5 flex items-center justify-center gap-0.5 capitalize cursor-pointer ${btnVariants[variant]} ${props.className}`}
+      className={`px-24px py-10px text-body leading-5 flex items-center justify-center gap-2px capitalize w-full cursor-pointer disabled:cursor-not-allowed ${btnVariants[variant]} ${props.className}`}
     >
       {children}
     </button>

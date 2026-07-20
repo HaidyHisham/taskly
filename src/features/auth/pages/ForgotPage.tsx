@@ -1,7 +1,11 @@
+import ForgotForm from "../components/forgot/ForgotForm"
+import AuthLayout from "@/layouts/AuthLayout"
 
 function ForgotPage() {
   return (
-    <div>ForgotPage</div>
+    <AuthLayout>
+      <ForgotForm />
+    </AuthLayout>
   )
 }
 
