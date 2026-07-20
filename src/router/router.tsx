@@ -3,6 +3,7 @@ import SignUpPage from "@/features/auth/pages/SignUpPage";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { isAuthenticated } from "@/features/auth/utils/auth";
 import MasterLayout from "@/layouts/MasterLayout";
+import ForgotPage from "@/features/auth/pages/ForgotPage";
 
 
 const router = createBrowserRouter([
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     {
         path: "/login",
         element: <LoginPage />,
+    },
+    {
+        path: "/forgot-password",
+        element: <ForgotPage />,
     },
     {
         path: "/project",
