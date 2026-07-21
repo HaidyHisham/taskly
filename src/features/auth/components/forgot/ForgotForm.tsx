@@ -14,6 +14,8 @@ import { toast } from "react-toastify";
 import { forgotSchema, type TForgotInput } from "../../schemas/forgot.schema";
 import { useTimer } from "../../hooks/useTimer";
 
+import { forgotPasswordService } from "../../services/forgot.services";
+
 function ForgotForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +25,7 @@ function ForgotForm() {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<TForgotInput>({
     resolver: zodResolver(forgotSchema),
@@ -32,25 +35,36 @@ function ForgotForm() {
     },
   });
 
-  const onSubmit: SubmitHandler<TForgotInput> = (_data) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+  const onSubmit: SubmitHandler<TForgotInput> = async (data) => {
+    try {
+      setIsLoading(true);
+      await forgotPasswordService(data.email);
       setIsSubmitted(true);
       startTimer();
       toast.success("Password reset instructions sent.");
-    }, 500);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to send reset link");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (trialsLeft <= 0 || isRunning || isLoading) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    const email = watch("email");
+    if (!email) return;
+
+    try {
+      setIsLoading(true);
+      await forgotPasswordService(email);
       setTrialsLeft((prev) => prev - 1);
       startTimer();
       toast.success("Password reset link resent.");
-    }, 500);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to resend reset link");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const isResendDisabled = isRunning || trialsLeft <= 0 || isLoading;
