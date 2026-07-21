@@ -1,8 +1,10 @@
+import ResetForm from "../components/reset/ResetForm";
+import ResetLayout from "@/layouts/ResetLayout";
 
-function ResetPage() {
+export default function ResetPage() {
   return (
-    <div>ResetPage</div>
-  )
+    <ResetLayout>
+      <ResetForm />
+    </ResetLayout>
+  );
 }
-
-export default ResetPage

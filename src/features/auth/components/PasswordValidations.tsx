@@ -7,7 +7,7 @@ interface IProps {
 const PasswordValidations: React.FC<IProps> = ({label, isValid=false}) =>{
     return (
         <div className="flex items-center gap-x-2">
-           {isValid? <Check className="size-4"/> : <Circle className="size-4"/>}
+           {isValid? <Check className="size-3.5"/> : <Circle className="size-3.5"/>}
            <p className="text-label text-secondary">{label}</p>
         </div>
     )

@@ -12,6 +12,7 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
     Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
   label: string;
   variant?: 'default' | 'error';
+  reset?: boolean;
   fieldMsg?: string;
   isOptional?: boolean;
   containerClassName?: string;
@@ -25,6 +26,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
   const {
     label,
     variant = 'default',
+    reset = false,
     fieldMsg,
     isOptional = false,
     containerClassName = '',
@@ -39,9 +41,9 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
      const activeVariant = fieldState.error ? 'error' : variant;
 
   return (
-    <div className={`flex flex-col gap-6px ${containerClassName}`}>
+    <div className={`flex flex-col gap-2 ${containerClassName}`}>
       <label
-        className={`text-label-sm tracking-[0.55px] uppercase ${activeVariant === 'error' ? 'text-error' : 'text-slate-md'}`}
+        className={`text-label-sm tracking-[0.55px] uppercase  ${activeVariant === 'error' ? 'text-error' : 'text-secondary'}`}
         htmlFor={label}
       >
         {label}
@@ -55,6 +57,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
       <FormInput
         id={label}
         variant={activeVariant}
+        reset={reset}
         disabled={disabled}
         {...field}
         showPasswordToggle={showPasswordToggle}
