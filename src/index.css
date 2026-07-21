@@ -22,6 +22,7 @@
 
   /* Semantic Colors */
   --success: #52F7B5;
+  --success-mint: #82F9BE;
   --error: #B71C1C;
   --warning: #FFB300;
 
@@ -81,6 +82,7 @@
 
   /* Semantic Colors */
   --color-success: var(--success);
+  --color-success-mint: var(--success-mint);
   --color-error: var(--error);
   --color-warning: var(--warning);
 
