@@ -18,7 +18,10 @@ export const resetSchema = z
         issue.input === undefined ? "Confirm Password is required" : "Not a string",
     }),
   })
-  .refine((data) => data.confirmPassword === data.password, {
+  .refine((data) => {
+    if (data.confirmPassword === "") return true;
+    return data.confirmPassword === data.password;
+  }, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
