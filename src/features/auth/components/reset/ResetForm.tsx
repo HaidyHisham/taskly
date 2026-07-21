@@ -4,13 +4,18 @@ import Title from "@/shared/Title"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 import PasswordValidations from "@/features/auth/components/PasswordValidations"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { resetSchema, type TResetInput } from "@/features/auth/schemas/resert.schema"
 
 function ResetForm() {
   const {
     control,
     handleSubmit,
     watch,
-  } = useForm({
+    formState: { errors },
+  } = useForm<TResetInput>({
+    resolver: zodResolver(resetSchema),
+    mode: "onChange",
     defaultValues: {
       password: "",
       confirmPassword: "",
@@ -24,7 +29,7 @@ function ResetForm() {
   const isDigitValid = /\d/.test(watchedPassword);
   const isSpecialValid = /[!@#$%^&*(),.?":{}|<>]/.test(watchedPassword);
 
-  const OnSubmit = (data: any) => {
+  const OnSubmit = (data: TResetInput) => {
     console.log("Reset Password data submitted:", data)
   };
 
@@ -45,6 +50,8 @@ function ResetForm() {
           type="password"
           placeholder="Enter new password"
           reset
+          fieldMsg={errors.password?.message}
+          variant={errors.password ? "error" : "default"}
           containerClassName="w-full"
         />
         <FormField
@@ -54,6 +61,8 @@ function ResetForm() {
           type="password"
           placeholder="Confirm new password"
           reset
+          fieldMsg={errors.confirmPassword?.message}
+          variant={errors.confirmPassword ? "error" : "default"}
           containerClassName="w-full"
         />
 
