@@ -9,8 +9,11 @@ import { setCredentials, logout } from "./features/auth/store/authSlice";
 import { getRefreshToken } from "./features/auth/utils/auth";
 import { refreshTokenService } from "./features/auth/services/token.services";
 
+import { useResetPassRedirect } from "./features/auth/hooks/reset-password.hooks";
+
 function App() {
   const dispatch = useAppDispatch();
+  useResetPassRedirect();
 
   useEffect(() => {
     const refreshSession = async () => {

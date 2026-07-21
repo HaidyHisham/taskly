@@ -2,19 +2,18 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 
 export const useResetPassRedirect = () => {
+  const hash = window.location.hash;
+  const hasRecovery = hash && hash.includes("type=recovery");
+  const params = new URLSearchParams(hash.substring(1));
+  const accessToken = params.get('access_token');
+
+
+  if (hasRecovery && accessToken) {
+    window.location.href = `/reset-password?access_token=${accessToken}`;
+  }
   useEffect(() => {
-    if (!window.location.hash) return;
-
-    const hashValue = window.location.hash.substring(1);
-    const params = new URLSearchParams(hashValue);
-
-    const accessToken = params.get('access_token');
-    const type = params.get('type');
-
-    if (type === 'recovery' && accessToken) {
-      window.location.href = `/reset-password?access_token=${accessToken}`;
-    } else if (type === 'recovery' && !accessToken) {
+    if (hasRecovery && !accessToken) {
       toast.error('Invalid or expired reset link.');
     }
-  }, []);
+  }, [hasRecovery, accessToken]);
 };

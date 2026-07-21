@@ -2,12 +2,21 @@ import Button from "@/shared/Button"
 import FormField from "@/shared/FormField"
 import Title from "@/shared/Title"
 import { useForm } from "react-hook-form"
-import { Link } from "react-router-dom"
+import { Link, useSearchParams, useNavigate } from "react-router-dom"
 import PasswordValidations from "@/features/auth/components/PasswordValidations"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { resetSchema, type TResetInput } from "@/features/auth/schemas/resert.schema"
+import { resetPassword } from "../../services/forgot.services"
+import { useState, useEffect } from "react"
+import { toast } from "react-toastify"
 
 function ResetForm() {
+  const [searchParams] = useSearchParams();
+  const accessToken = searchParams.get("access_token") || "";
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -22,6 +31,12 @@ function ResetForm() {
     },
   });
 
+  useEffect(() => {
+    if (!accessToken) {
+      toast.error("Invalid or expired reset link.");
+    }
+  }, [accessToken]);
+
   const watchedPassword = watch("password") || "";
   const isLengthValid = watchedPassword.length >= 8 && watchedPassword.length <= 64;
   const isLowercaseValid = /[a-z]/.test(watchedPassword);
@@ -29,9 +44,37 @@ function ResetForm() {
   const isDigitValid = /\d/.test(watchedPassword);
   const isSpecialValid = /[!@#$%^&*(),.?":{}|<>]/.test(watchedPassword);
 
-  const OnSubmit = (data: TResetInput) => {
-    console.log("Reset Password data submitted:", data)
+  const OnSubmit = async (data: TResetInput) => {
+    if (!accessToken) {
+      toast.error("No active reset session found. Please request a new password reset link.");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      await resetPassword(accessToken, data.password);
+      setIsSuccess(true);
+      toast.success("Your password has been updated successfully. You can now log in");
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to reset password");
+      setIsLoading(false);
+    }
   };
+
+  if (!accessToken) {
+    return (
+      <div className="relative w-full max-w-[512px] bg-white border border-slate-light/30 rounded-8px p-6 md:p-10 shadow-lg flex flex-col items-center justify-center text-center gap-y-4">
+        <p className="text-body font-semibold text-error">
+          Invalid or expired reset link.
+        </p>
+        <Link to="/login" className="text-primary font-semibold hover:underline text-sm transition-colors duration-200">
+          Back to sign in
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full max-w-[512px] bg-white border border-slate-light/30 rounded-8px p-6 md:p-10 shadow-lg flex flex-col">
@@ -50,6 +93,7 @@ function ResetForm() {
           type="password"
           placeholder="Enter new password"
           reset
+          disabled={isLoading || isSuccess}
           fieldMsg={errors.password?.message}
           variant={errors.password ? "error" : "default"}
           containerClassName="w-full"
@@ -61,6 +105,7 @@ function ResetForm() {
           type="password"
           placeholder="Confirm new password"
           reset
+          disabled={isLoading || isSuccess}
           fieldMsg={errors.confirmPassword?.message}
           variant={errors.confirmPassword ? "error" : "default"}
           containerClassName="w-full"
@@ -87,8 +132,9 @@ function ResetForm() {
         <Button
           type="submit"
           className="w-full py-3.5 cursor-pointer"
+          disabled={isLoading || isSuccess || !accessToken}
         >
-          Update Password
+          {isLoading || isSuccess ? "Updating..." : "Update Password"}
         </Button>
       </form>
 
