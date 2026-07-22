@@ -6,6 +6,7 @@ import MasterLayout from "@/layouts/MasterLayout";
 import ForgotPage from "@/features/auth/pages/ForgotPage";
 import ResetPage from "@/features/auth/pages/ResetPage";
 import AddProjectForm from "@/features/projects/components/AddProjectForm";
+import ProjectPage from "@/features/projects/pages/ProjectPage";
 
 
 const router = createBrowserRouter([
@@ -34,13 +35,14 @@ const router = createBrowserRouter([
         element: <MasterLayout />,
         children: [
             {
-                index: true,
-                element: <div className="p-6">Projects Area</div>,
+                path: "add",
+                element: <ProjectPage mode="add" />
             },
             {
-                path: "add",
-                element: <AddProjectForm />,
+                path: "edit/:id",
+                element: <ProjectPage mode="edit" />
             },
+
             {
                 path: "epics",
                 element: <div className="p-6">Project Epics Area</div>,

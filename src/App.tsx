@@ -24,15 +24,22 @@ function App() {
       try {
         const result = await refreshTokenService(storedRefreshToken);
         
+        const userObj = {
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.user_metadata?.name || "",
+          job_title: result.user.user_metadata?.job_title || "",
+        };
+
         setAccessToken(result.access_token, rememberMe);
         if (result.refresh_token) {
           setRefreshToken(result.refresh_token, rememberMe);
         }
-        setUserData(result.user, rememberMe);
+        setUserData(userObj, rememberMe);
 
         dispatch(
           setUser({
-            user: result.user,
+            user: userObj,
           })
         );
       } catch (error) {
