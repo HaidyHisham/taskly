@@ -1,11 +1,16 @@
 import  { useState } from 'react';
 import Sidebar from '@/shared/Sidebar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { MobileHeader, MobileBottomNav } from "@/shared/MobileNav";
 import Navbar from '@/shared/Navbar';
+import { isAuthenticated } from '@/features/auth/utils/auth';
 
 function MasterLayout() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="flex h-screen w-screen overflow-hidden font-sans">

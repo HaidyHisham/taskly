@@ -20,7 +20,7 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
-    { path: "projects", label: "Projects", Icon: ProjectsIcon },
+    { path: "", label: "Projects", Icon: ProjectsIcon },
     { path: "epics", label: "Project Epics", Icon: EpicsIcon },
     { path: "tasks", label: "Project Tasks", Icon: TasksIcon },
     { path: "members", label: "Project Members", Icon: MembersIcon },
@@ -54,6 +54,7 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
             <NavLink
               key={path}
               to={path}
+              end={path === ""}
               onClick={() => setIsMobileOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${

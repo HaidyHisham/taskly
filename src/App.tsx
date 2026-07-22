@@ -4,11 +4,10 @@ import { RouterProvider } from "react-router-dom";
 import router from "./router/router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAppDispatch } from "./store/hooks";
-import { setCredentials, logout } from "./features/auth/store/authSlice";
-import { getRefreshToken } from "./features/auth/utils/auth";
+import { useAppDispatch } from "@/shared/store/store";
+import { setUser, logout } from "@/shared/store/slices/auth.slice";
+import { getRefreshToken, isRememberMe, setAccessToken, setRefreshToken, setUserData, clearAuthData } from "./features/auth/utils/auth";
 import { refreshTokenService } from "./features/auth/services/token.services";
-
 import { useResetPassRedirect } from "./features/auth/hooks/reset-password.hooks";
 
 function App() {
@@ -20,19 +19,24 @@ function App() {
       const storedRefreshToken = getRefreshToken();
       if (!storedRefreshToken) return;
 
-      const rememberMe = !!localStorage.getItem("taskly_refresh_token");
+      const rememberMe = isRememberMe();
 
       try {
         const result = await refreshTokenService(storedRefreshToken);
+        
+        setAccessToken(result.access_token, rememberMe);
+        if (result.refresh_token) {
+          setRefreshToken(result.refresh_token, rememberMe);
+        }
+        setUserData(result.user, rememberMe);
+
         dispatch(
-          setCredentials({
+          setUser({
             user: result.user,
-            accessToken: result.access_token,
-            refreshToken: result.refresh_token,
-            rememberMe,
           })
         );
       } catch (error) {
+        clearAuthData();
         dispatch(logout());
       }
     };
