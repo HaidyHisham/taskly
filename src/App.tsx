@@ -6,9 +6,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAppDispatch } from "./store/hooks";
 import { setCredentials, logout } from "./features/auth/store/authSlice";
-import { getRefreshToken } from "./features/auth/utils/auth";
+import { getRefreshToken, isRememberMe } from "./features/auth/utils/auth";
 import { refreshTokenService } from "./features/auth/services/token.services";
-
 import { useResetPassRedirect } from "./features/auth/hooks/reset-password.hooks";
 
 function App() {
@@ -20,7 +19,7 @@ function App() {
       const storedRefreshToken = getRefreshToken();
       if (!storedRefreshToken) return;
 
-      const rememberMe = !!localStorage.getItem("taskly_refresh_token");
+      const rememberMe = isRememberMe();
 
       try {
         const result = await refreshTokenService(storedRefreshToken);
