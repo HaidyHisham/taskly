@@ -12,7 +12,7 @@ const AuthButton: React.FC<IProps> = ({variant='primary', children, ...props})=>
     }
 
     return (
-        <button {...props} className={` w-full px-6 py-2.5 text-body leading-5 flex items-center justify-center gap-0.5 capitalize cursor-pointer ${btnVariants[variant]} ${props.className}`}>
+        <button {...props} className={` w-full px-6 py-2.5 text-body leading-5 flex items-center justify-center gap-0.5 capitalize cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${btnVariants[variant]} ${props.className}`}>
             {children}
         </button>
     )

@@ -3,22 +3,25 @@ import Eye from "@assets/icons/Eye.svg?react"
 import EyeOff from "@assets/icons/eye-off.svg?react"
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'error';
+  reset?: boolean;
   showPasswordToggle?: boolean;
 }
 
-const FormInput: React.FC<IProps> = ({ variant = 'default', showPasswordToggle = true, ...props }) => {
+const FormInput: React.FC<IProps> = ({ variant = 'default', reset = false, showPasswordToggle = true, ...props }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
 
   const containerVariants = {
-    default:
-      'bg-surface-highest focus-within:outline-primary focus-visible:outline-primary',
+    default: reset
+      ? 'bg-surface-low/50 focus-within:outline-primary focus-visible:outline-primary'
+      : 'bg-surface-highest focus-within:outline-primary focus-visible:outline-primary',
     error:
       'bg-error/10 outline outline-1 outline-error focus-within:outline-error focus-visible:outline-error',
   };
 
   const inputVariants = {
-    default:
-      'bg-surface-highest placeholder:text-secondary-light text-secondary focus-within:outline-primary focus-visible:outline-primary',
+    default: reset
+      ? 'bg-transparent placeholder:text-secondary-light text-secondary focus-within:outline-primary focus-visible:outline-primary'
+      : 'bg-surface-highest placeholder:text-secondary-light text-secondary focus-within:outline-primary focus-visible:outline-primary',
     error:
       'text-error placeholder:text-error/60 focus-within:outline-error focus-visible:outline-error',
   };
@@ -33,9 +36,9 @@ const FormInput: React.FC<IProps> = ({ variant = 'default', showPasswordToggle =
         <div className="w-1/4 cursor-pointer flex items-center justify-end px-4 py-3.5"
           onClick={() => setIsPasswordShown(!isPasswordShown)}>
           {isPasswordShown ? (
-            <Eye className="w-5 h-5" />
-          ) : (
             <EyeOff className="w-5 h-5" />
+          ) : (
+            <Eye className="w-5 h-5" />
           )}
         </div>
       )}
