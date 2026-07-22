@@ -5,6 +5,7 @@ import { isAuthenticated } from "@/features/auth/utils/auth";
 import MasterLayout from "@/layouts/MasterLayout";
 import ForgotPage from "@/features/auth/pages/ForgotPage";
 import ResetPage from "@/features/auth/pages/ResetPage";
+import AddProjectForm from "@/features/projects/components/AddProjectForm";
 
 
 const router = createBrowserRouter([
@@ -34,11 +35,11 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Navigate to="projects" replace />,
+                element: <div className="p-6">Projects Area</div>,
             },
             {
-                path: "projects",
-                element: <div className="p-6">Projects Area</div>,
+                path: "add",
+                element: <AddProjectForm />,
             },
             {
                 path: "epics",

@@ -71,7 +71,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({ onMenuClick }) => {
 
 export const MobileBottomNav: React.FC = () => {
   const menuItems = [
-    { path: "projects", label: "Projects", Icon: ProjectsIcon },
+    { path: "", label: "Projects", Icon: ProjectsIcon },
     { path: "epics", label: "Epics", Icon: EpicsIcon },
     { path: "tasks", label: "Tasks", Icon: TasksIcon },
     { path: "members", label: "Members", Icon: MembersIcon },
@@ -84,6 +84,7 @@ export const MobileBottomNav: React.FC = () => {
         <NavLink
           key={path}
           to={path}
+          end={path === ""}
           className={({ isActive }) =>
             `flex flex-col items-center justify-center gap-1.5 flex-1 py-1 transition-colors ${
               isActive ? "text-primary" : "text-slate-medium hover:text-slate-dark"
