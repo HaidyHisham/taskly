@@ -1,5 +1,9 @@
+const REFRESH_TOKEN_SINGLE_SESSION = 12 * 60 * 60; // 12 hours in seconds
+const REMEMBER_ME_TOKEN_MONTHLY = 30 * 24 * 60 * 60; // 30 days in seconds
+
 const ACCESS_TOKEN_KEY = "taskly_access_token";
 const REFRESH_TOKEN_KEY = "taskly_refresh_token";
+const REFRESH_TOKEN_EXPIRES_AT_KEY = "taskly_refresh_token_expires_at";
 const USER_KEY = "taskly_user";
 const REMEMBER_ME_KEY = "taskly_remember_me";
 
@@ -26,11 +30,11 @@ const getCookie = (name: string): string | null => {
   return null;
 };
 
-const setCookie = (name: string, value: string, rememberMe = false): void => {
+const setCookie = (name: string, value: string, maxAge?: number): void => {
   let expires = "";
-  if (rememberMe) {
+  if (maxAge !== undefined) {
     const date = new Date();
-    date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
+    date.setTime(date.getTime() + maxAge * 1000);
     expires = `; expires=${date.toUTCString()}`;
   }
   document.cookie = `${name}=${encodeURIComponent(value) || ""}${expires}; path=/; SameSite=Lax; Secure`;
@@ -40,13 +44,19 @@ const eraseCookie = (name: string): void => {
   document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax; Secure`;
 };
 
-export const setAccessToken = (token: string, rememberMe = false): void => {
-  setCookie(ACCESS_TOKEN_KEY, token, rememberMe);
+export const setAccessToken = (token: string, rememberMe = false, expiresIn = 3600): void => {
+  setCookie(ACCESS_TOKEN_KEY, token, expiresIn);
+
+  const refreshTokenMaxAge = rememberMe ? REMEMBER_ME_TOKEN_MONTHLY : REFRESH_TOKEN_SINGLE_SESSION;
+
   if (rememberMe) {
-    setCookie(REMEMBER_ME_KEY, "true", true);
+    setCookie(REMEMBER_ME_KEY, "true", REMEMBER_ME_TOKEN_MONTHLY);
   } else {
     eraseCookie(REMEMBER_ME_KEY);
   }
+
+  const expiresAtMs = Date.now() + refreshTokenMaxAge * 1000;
+  setCookie(REFRESH_TOKEN_EXPIRES_AT_KEY, expiresAtMs.toString(), refreshTokenMaxAge);
 };
 
 export const getAccessToken = (): string | null => {
@@ -54,7 +64,8 @@ export const getAccessToken = (): string | null => {
 };
 
 export const setRefreshToken = (token: string, rememberMe = false): void => {
-  setCookie(REFRESH_TOKEN_KEY, token, rememberMe);
+  const refreshTokenMaxAge = rememberMe ? REMEMBER_ME_TOKEN_MONTHLY : REFRESH_TOKEN_SINGLE_SESSION;
+  setCookie(REFRESH_TOKEN_KEY, token, refreshTokenMaxAge);
 };
 
 export const getRefreshToken = (): string | null => {
@@ -62,7 +73,8 @@ export const getRefreshToken = (): string | null => {
 };
 
 export const setUserData = (user: IUserData, rememberMe = false): void => {
-  setCookie(USER_KEY, JSON.stringify(user), rememberMe);
+  const userMaxAge = rememberMe ? REMEMBER_ME_TOKEN_MONTHLY : REFRESH_TOKEN_SINGLE_SESSION;
+  setCookie(USER_KEY, JSON.stringify(user), userMaxAge);
 };
 
 export const getUserData = (): IUserData | null => {
@@ -78,6 +90,7 @@ export const getUserData = (): IUserData | null => {
 export const clearAuthData = (): void => {
   eraseCookie(ACCESS_TOKEN_KEY);
   eraseCookie(REFRESH_TOKEN_KEY);
+  eraseCookie(REFRESH_TOKEN_EXPIRES_AT_KEY);
   eraseCookie(USER_KEY);
   eraseCookie(REMEMBER_ME_KEY);
 };

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "@/shared/store/store";
 import LogoutBtn from "./LogoutBtn";
 
 import ProjectsIcon from "@/assets/icons/projects.svg?react";

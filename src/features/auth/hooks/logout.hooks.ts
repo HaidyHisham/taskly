@@ -1,21 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { logout as logoutAction } from "@/features/auth/store/authSlice";
+import { useAppDispatch } from "@/shared/store/store";
+import { logout as logoutAction } from "@/shared/store/slices/auth.slice";
 import { logoutService } from "@/features/auth/services/logout.services";
+import { getAccessToken, clearAuthData } from "@/features/auth/utils/auth";
+import { toast } from "react-toastify";
 
 export const useLogout = () => {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const token = useAppSelector((state) => state.auth.token);
+  const token = getAccessToken();
 
   const onHandleLogout = async () => {
     setError(null);
     setIsPending(true);
 
     const completeLocalLogout = () => {
+      clearAuthData();
       dispatch(logoutAction());
       navigate("/login");
     };
@@ -31,20 +34,8 @@ export const useLogout = () => {
       completeLocalLogout();
     } catch (err: any) {
       const msg = err?.message || "Logout failed, please try again.";
-      const lowerMsg = msg.toLowerCase();
-
-      if (
-        lowerMsg.includes("jwt") ||
-        lowerMsg.includes("expired") ||
-        lowerMsg.includes("token") ||
-        lowerMsg.includes("signature") ||
-        lowerMsg.includes("claim")
-      ) {
-        completeLocalLogout();
-      } else {
-        setError(msg);
-        alert(msg);
-      }
+      setError(msg);
+      toast.error(msg);
     } finally {
       setIsPending(false);
     }

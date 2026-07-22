@@ -8,8 +8,9 @@ import { Link, useNavigate } from "react-router-dom"
 import { loginService } from "../../services/login.services"
 import { toast } from "react-toastify"
 import { useState } from "react"
-import { useAppDispatch } from "@/store/hooks"
-import { setCredentials } from "../../store/authSlice"
+import { useAppDispatch } from "@/shared/store/store"
+import { setUser } from "@/shared/store/slices/auth.slice"
+import { setAccessToken, setRefreshToken, setUserData } from "@/features/auth/utils/auth"
 
 function LoginForm() {
     const [isLoading, setIsLoading] = useState(false)
@@ -39,17 +40,22 @@ function LoginForm() {
             toast.success("Welcome back!");
 
             if (result && result.access_token) {
+                const userObj = {
+                    id: result.user.id,
+                    email: result.user.email,
+                    name: result.user.user_metadata?.name || "",
+                    job_title: result.user.user_metadata?.department || "",
+                };
+
+                setAccessToken(result.access_token, !!rememberMe);
+                if (result.refresh_token) {
+                    setRefreshToken(result.refresh_token, !!rememberMe);
+                }
+                setUserData(userObj, !!rememberMe);
+
                 dispatch(
-                    setCredentials({
-                        user: {
-                            id: result.user.id,
-                            email: result.user.email,
-                            name: result.user.user_metadata?.name || "",
-                            job_title: result.user.user_metadata?.department || "",
-                        },
-                        accessToken: result.access_token,
-                        refreshToken: result.refresh_token,
-                        rememberMe: !!rememberMe,
+                    setUser({
+                        user: userObj,
                     })
                 );
                 navigate("/project");

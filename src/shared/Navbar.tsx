@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "@/shared/store/store";
 import LogoutBtn from "./LogoutBtn";
 
 function Navbar() {

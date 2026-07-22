@@ -9,8 +9,9 @@ import { Link, useNavigate } from "react-router-dom"
 import { signUpService } from "../../services/signup.services"
 import { toast } from "react-toastify"
 import { useState } from "react"
-import { useAppDispatch } from "@/store/hooks"
-import { setCredentials } from "../../store/authSlice"
+import { useAppDispatch } from "@/shared/store/store"
+import { setUser } from "@/shared/store/slices/auth.slice"
+import { setAccessToken, setRefreshToken, setUserData } from "@/features/auth/utils/auth"
 
 function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -35,7 +36,7 @@ function SignUpForm() {
       confirm_password: '',
     },
   });
-  const watchedPassword = watch('password');
+  const watchedPassword = watch('password') || '';
   const isPassLengthValid = /^.{8,}$/.test(watchedPassword);
   const isPassFormateValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(
     watchedPassword
@@ -61,17 +62,22 @@ function SignUpForm() {
       toast.success("Account created successfully!");
 
       if (result && result.access_token) {
+        const userObj = {
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.user_metadata?.name || "",
+          job_title: result.user.user_metadata?.department || "",
+        };
+
+        setAccessToken(result.access_token, true);
+        if (result.refresh_token) {
+          setRefreshToken(result.refresh_token, true);
+        }
+        setUserData(userObj, true);
+
         dispatch(
-          setCredentials({
-            user: {
-              id: result.user.id,
-              email: result.user.email,
-              name: result.user.user_metadata?.name || "",
-              job_title: result.user.user_metadata?.department || "",
-            },
-            accessToken: result.access_token,
-            refreshToken: result.refresh_token,
-            rememberMe: true,
+          setUser({
+            user: userObj,
           })
         );
         navigate("/project");
