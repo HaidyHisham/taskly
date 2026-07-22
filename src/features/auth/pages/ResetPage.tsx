@@ -1,10 +1,10 @@
 import ResetForm from "../components/reset/ResetForm";
-import ResetLayout from "@/layouts/ResetLayout";
+import AuthLayout from "@/layouts/AuthLayout";
 
 export default function ResetPage() {
   return (
-    <ResetLayout>
+    <AuthLayout reset>
       <ResetForm />
-    </ResetLayout>
+    </AuthLayout>
   );
 }
