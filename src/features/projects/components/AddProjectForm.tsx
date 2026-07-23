@@ -2,10 +2,28 @@ import { useForm } from "react-hook-form";
 import FormField from "@/shared/FormField"
 import Label from "@/shared/Label";
 import Button from "@/shared/Button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addProjectSchema, type TAddProjectInput } from "../schemas/project.schema.";
 
 function AddProjectForm() {
-    const { handleSubmit, control, formState: { errors } } = useForm()
-    const onSubmit = (data: any) => {
+    const {
+    handleSubmit,
+    control,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<TAddProjectInput>({
+    resolver: zodResolver(addProjectSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      name: '',
+      description: '',
+    },
+  });
+  
+  const descriptionWatcher = watch('description');
+
+    const onSubmit = (data: TAddProjectInput) => {
         console.log(data)
     }
     return (
@@ -43,7 +61,7 @@ function AddProjectForm() {
 
                     />
                     <span className="text-label block text-end font-medium text-slate-medium">
-                        0/500 characters
+                        {descriptionWatcher?.length || 0}/500 characters
                     </span>
                    {/*buttons*/}
 
@@ -59,6 +77,7 @@ function AddProjectForm() {
                            
                             type="submit"
                             className="lg:w-fit! text-base! shadow-primary"
+
                         >
                             Create Project
                         </Button>
