@@ -107,6 +107,7 @@
 
   /* box shadows */
   --shadow-btn: var(--shadow-btn);
+  --shadow-primary: 0px 4px 6px -4px rgba(0, 61, 155, 0.2), 0px 10px 15px -3px rgba(0, 61, 155, 0.2);
 }
 
 /*^----------------------------- utilities ----------------------------- */

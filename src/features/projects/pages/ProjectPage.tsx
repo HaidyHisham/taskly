@@ -15,10 +15,10 @@ function ProjectPage({ mode }: ProjectPageProps) {
   return (
 
     <section>
-        <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full hidden lg:flex">
+        <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full hidden lg:flex mb-8">
           {isAddForm ? 'add new project' : isEditForm ? 'edit project' : ''}
         </h1>
-        <section className="lg:bg-white rounded-t-lg  2xl:max-w-[672px] 2xl:mx-auto px-6 lg:p-0 mb-10">
+        <section className="lg:bg-white rounded-t-lg lg:max-w-4/5 xl:max-w-3/4 2xl:max-w-1/2 2xl:mx-auto px-6 lg:p-0 mb-10">
         <div className="pb-12 lg:pb-10 lg:p-8">
             <header className="flex items-center gap-4 pb-6 border-b border-surface-low mb-8 lg:mb-10">
                 <div className="items-center justify-center bg-primary-container/10 p-3 rounded-sm hidden lg:flex">
