@@ -1,12 +1,19 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import FormField from "@/shared/FormField"
+import { useNavigate } from "react-router-dom";
+import FormField from "@/shared/FormField";
 import Label from "@/shared/Label";
 import Button from "@/shared/Button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addProjectSchema, type TAddProjectInput } from "../schemas/project.schema.";
+import { getAccessToken } from "@/features/auth/utils/auth";
+import { createProject } from "../services/project.services";
+import { toast } from "react-toastify";
 
 function AddProjectForm() {
-    const {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const {
     handleSubmit,
     control,
     watch,
@@ -23,9 +30,22 @@ function AddProjectForm() {
   
   const descriptionWatcher = watch('description');
 
-    const onSubmit = (data: TAddProjectInput) => {
-        console.log(data)
+  const onSubmit = async (data: TAddProjectInput) => {
+    setIsLoading(true);
+    try {
+      const token = getAccessToken();
+      if (!token) {
+        throw new Error("No authenticated user found. Please login.");
+      }
+      await createProject({ data, accessToken: token });
+      toast.success("Project created successfully");
+      reset();
+    } catch (err: any) {
+      toast.error(`Failed to create project: ${err.message}`);
+    } finally {
+      setIsLoading(false);
     }
+  };
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-8">
@@ -67,19 +87,21 @@ function AddProjectForm() {
 
                     <div className="flex flex-col lg:flex-row justify-between items-end gap-4 mt-8">
                         <Button
+                            type="button"
                             variant="ghost"
+                            disabled={isLoading}
+                            onClick={() => navigate("/project")}
                             className="lg:w-fit! font-bold text-slate-medium! text-base! order-1 lg:order-0"
                         >
                             Back
                         </Button>
 
                         <Button
-                           
                             type="submit"
+                            disabled={isLoading}
                             className="lg:w-fit! text-base! shadow-primary"
-
                         >
-                            Create Project
+                            {isLoading ? "Creating..." : "Create Project"}
                         </Button>
                     </div>
                 </div>
