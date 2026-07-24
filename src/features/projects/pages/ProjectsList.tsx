@@ -1,21 +1,29 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AddProjectCard from "../components/AddProjectCard";
 import ProjectCard, { type IProject } from "../components/ProjectCard";
 import ProjectsHeader from "../components/ProjectHeader";
-import { getAccessToken } from "@/features/auth/utils/auth";
+import { getAccessToken, clearAuthData } from "@/features/auth/utils/auth";
 import { getProjects } from "../services/project.services";
 import Pagination from "@/shared/Pagination";
 import LinkButton from "@/shared/LinkButton";
 import PlusIcon from "@/assets/icons/plus.svg?react";
 import Loading from "../components/Loading";
+import ErrorState from "@/features/projects/components/ErrorState";
 
 function ProjectsList() {
+    const navigate = useNavigate();
     const [projects, setProjects] = useState<IProject[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchProjects = async () => {
         setIsLoading(true);
+        setError(null);
         try {
+
+             throw new Error("Simulated network connection failure.");
+            
             const token = getAccessToken();
             if (!token) {
                 throw new Error("No authenticated user found. Please login.");
@@ -24,6 +32,14 @@ function ProjectsList() {
             setProjects(data || []);
         } catch (err: any) {
             console.error("Failed to retrieve projects:", err.message);
+            
+            
+            if (err.status === 401 || err.message?.includes("401") || err.message?.toLowerCase().includes("unauthorized")) {
+                clearAuthData();
+                navigate("/login");
+            } else {
+                setError(err.message || "Failed to retrieve projects.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -37,6 +53,8 @@ function ProjectsList() {
         <section className="flex flex-col gap-10">
             {isLoading ? (
                 <Loading />
+            ) : error ? (
+                <ErrorState error={new Error(error)} reset={fetchProjects} />
             ) : (
                 <>
                     <ProjectsHeader />
