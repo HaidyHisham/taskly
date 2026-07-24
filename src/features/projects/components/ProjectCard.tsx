@@ -30,6 +30,7 @@ function ProjectCard({ project }: IProps) {
                 </h2>
                 <Link
                     to={`/project/${project.id}/edit`}
+                    state={{ project }}
                     onClick={(e) => e.stopPropagation()}
                     className="text-slate-medium hover:text-slate-dark cursor-pointer transition-colors p-1"
                 >

@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import InitializeIcon from "@/assets/icons/initialize.svg?react"
 import ProjectForm from "../components/ProjectForm";
 import ProTipIcon from "@/assets/icons/protip.svg?react";
 import Breadcrumb from "@/shared/Breadcrumb";
 import { getAccessToken } from "@/features/auth/utils/auth";
 import { getProjects } from "../services/project.services";
+import { toast } from "react-toastify";
 
 interface ProjectPageProps {
     mode: 'add' | 'edit';
@@ -16,12 +17,16 @@ function ProjectPage({ mode }: ProjectPageProps) {
     const isAddForm = mode === 'add';
     const isEditForm = mode === 'edit';
     const { projectId } = useParams<{ projectId?: string }>();
-    const [projectName, setProjectName] = useState<string>("");
+    const location = useLocation();
+    const passedProject = location.state?.project;
+    const [projectName, setProjectName] = useState<string>(passedProject?.name || "");
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if (isEditForm && projectId) {
+        if (isEditForm && projectId && !projectName) {
             const loadProjectName = async () => {
                 try {
+                    setIsLoading(true);
                     const token = getAccessToken();
                     if (token) {
                         const projects = await getProjects({ accessToken: token });
@@ -31,12 +36,14 @@ function ProjectPage({ mode }: ProjectPageProps) {
                         }
                     }
                 } catch (error) {
-                    console.error("Failed to load project name for breadcrumb", error);
+                   toast.error(error instanceof Error ? error.message : "Failed to load project name")
+                } finally {
+                    setIsLoading(false);
                 }
             };
             loadProjectName();
         }
-    }, [isEditForm, projectId]);
+    }, [isEditForm, projectId, projectName]);
 
     const breadcrumbItems = isAddForm
         ? [
@@ -45,7 +52,14 @@ function ProjectPage({ mode }: ProjectPageProps) {
         ]
         : [
             { label: 'projects', path: '/project' },
-            { label: projectName || 'project', path: `/project/${projectId}/epics` },
+            { 
+                label: isLoading ? (
+                    <span className="animate-pulse inline-block w-20 h-3 bg-slate-200 rounded-xs align-middle" />
+                ) : (
+                    projectName || 'project'
+                ), 
+                path: `/project/${projectId}/epics` 
+            },
             { label: 'edit' }
         ];
 

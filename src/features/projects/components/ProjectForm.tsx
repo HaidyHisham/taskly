@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import FormField from "@/shared/FormField";
 import Label from "@/shared/Label";
 import Button from "@/shared/Button";
@@ -18,6 +18,8 @@ function ProjectForm({ mode }: ProjectFormProps) {
   const isEdit = mode === 'edit';
   const navigate = useNavigate();
   const { projectId } = useParams<{ projectId?: string }>();
+  const location = useLocation();
+  const passedProject = location.state?.project;
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -38,35 +40,42 @@ function ProjectForm({ mode }: ProjectFormProps) {
   const descriptionWatcher = watch('description');
 
   useEffect(() => {
-    if (isEdit && projectId) {
-      const loadProjectDetails = async () => {
-        try {
-          setIsLoading(true);
-          const token = getAccessToken();
-          if (token) {
-            const projects = await getProjects({ accessToken: token });
-            const currentProject = projects.find((p: any) => p.id === projectId);
-            if (currentProject) {
-              reset({
-                name: currentProject.name || '',
-                description: currentProject.description || '',
-              });
+    if (isEdit) {
+      if (passedProject) {
+        reset({
+          name: passedProject.name || '',
+          description: passedProject.description || '',
+        });
+      } else if (projectId) {
+        const loadProjectDetails = async () => {
+          try {
+            setIsLoading(true);
+            const token = getAccessToken();
+            if (token) {
+              const projects = await getProjects({ accessToken: token });
+              const currentProject = projects.find((p: any) => p.id === projectId);
+              if (currentProject) {
+                reset({
+                  name: currentProject.name || '',
+                  description: currentProject.description || '',
+                });
+              }
             }
+          } catch (error) {
+            console.error("Failed to load project details", error);
+          } finally {
+            setIsLoading(false);
           }
-        } catch (error) {
-          console.error("Failed to load project details", error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      loadProjectDetails();
+        };
+        loadProjectDetails();
+      }
     } else {
       reset({
         name: '',
         description: '',
       });
     }
-  }, [isEdit, projectId, reset]);
+  }, [isEdit, projectId, passedProject, reset]);
 
   const onSubmit = async (data: TAddProjectInput) => {
     try {
