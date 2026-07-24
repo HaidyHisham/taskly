@@ -43,7 +43,7 @@ const router = createBrowserRouter([
                 element: <ProjectPage mode="add" />
             },
             {
-                path: "edit/:id",
+                path: ":projectId/edit",
                 element: <ProjectPage mode="edit" />
             },
 

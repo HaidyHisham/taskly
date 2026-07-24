@@ -78,7 +78,7 @@ export const MobileBottomNav: React.FC = () => {
       { path: `/project/${projectId}/epics`, label: "Epics", Icon: EpicsIcon, end: false },
       { path: `/project/${projectId}/tasks`, label: "Tasks", Icon: TasksIcon, end: false },
       { path: `/project/${projectId}/members`, label: "Members", Icon: MembersIcon, end: false },
-      { path: `/project/${projectId}/details`, label: "Details", Icon: DetailsIcon, end: false },
+      { path: `/project/${projectId}/edit`, label: "Details", Icon: DetailsIcon, end: false },
     ] : [])
   ];
 

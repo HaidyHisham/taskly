@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import BreadcrumbIcon from "@/assets/icons/breadcrumb.svg?react"
 
 export interface BreadcrumbItem {
-  label: string;
+  label: React.ReactNode;
   path?: string;
 }
 

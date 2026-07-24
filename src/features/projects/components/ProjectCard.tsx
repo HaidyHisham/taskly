@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import DotsIcon from "@/assets/icons/dots.svg?react";
+import EditIcon from "@/assets/icons/edit.svg?react";
 
 export interface IProject {
     id: string;
@@ -11,6 +11,7 @@ export interface IProject {
 interface IProps {
     project: IProject;
 }
+
 function ProjectCard({ project }: IProps) {
     const dateString = project.created_at || "";
     const projectFormatedDate = dateString ? new Date(dateString).toLocaleDateString(
@@ -23,33 +24,31 @@ function ProjectCard({ project }: IProps) {
     ) : "";
 
     return (
-        <Link to={`/project/${project.id}/epics`} className=" w-full h-full rounded-lg p-6 bg-white flex flex-col gap-y-3.5 ">
+        <div className="flex flex-col gap-y-3.5 rounded-lg p-6 bg-white h-full relative">
             <div className="flex justify-between items-start w-full">
-                <h2 className="text-title-md text-slate-dark capitalize pr-4">
+                <Link to={`/project/${project.id}/epics`} className="text-title-md text-slate-dark capitalize pr-4">
                     {project?.name}
-                </h2>
+                </Link>
                 <Link
-                    to={`/project/edit/${project.id}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-slate-medium hover:text-slate-dark cursor-pointer transition-colors p-1"
+                    to={`/project/${project?.id}/edit`}
+                    state={{ project }}
+                    className="text-primary hover:text-primary-dark transition-colors p-1 shrink-0"
                 >
-                    <DotsIcon className="w-3 h-3" />
+                    <EditIcon className="w-5 h-5 text-primary" />
                 </Link>
             </div>
-            <p className="mb-6">{project?.description}</p>
-            <div className="flex justify-between items-end mt-auto">
-                <span className="font-bold text-label text-secondary-light uppercase tracking-[-0.55px]">
-                    Created At
-                </span>
-                <span className="font-medium text-secondary">
-                    {projectFormatedDate}
-                </span>
-            </div>
-
-        </Link>
-
-
-
+            <Link to={`/project/${project.id}/epics`} className="flex flex-col gap-y-3.5 h-full justify-between">
+                <p className="mb-6">{project?.description}</p>
+                <div className="flex justify-between items-end mt-auto">
+                    <span className="font-bold text-label text-secondary-light uppercase tracking-[-0.55px]">
+                        Created At
+                    </span>
+                    <span className="font-medium text-secondary">
+                        {projectFormatedDate}
+                    </span>
+                </div>
+            </Link>
+        </div>
     )
 }
 
