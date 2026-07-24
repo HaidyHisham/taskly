@@ -23,17 +23,18 @@ function ProjectCard({ project }: IProps) {
     ) : "";
 
     return (
-        <Link to={`/project/edit/${project.id}`} className=" w-full h-full rounded-lg p-6 bg-white flex flex-col gap-y-3.5 ">
+        <Link to={`/project/${project.id}/epics`} className=" w-full h-full rounded-lg p-6 bg-white flex flex-col gap-y-3.5 ">
             <div className="flex justify-between items-start w-full">
                 <h2 className="text-title-md text-slate-dark capitalize pr-4">
                     {project?.name}
                 </h2>
-                <button
-                    type="button"
+                <Link
+                    to={`/project/edit/${project.id}`}
+                    onClick={(e) => e.stopPropagation()}
                     className="text-slate-medium hover:text-slate-dark cursor-pointer transition-colors p-1"
                 >
                     <DotsIcon className="w-3 h-3" />
-                </button>
+                </Link>
             </div>
             <p className="mb-6">{project?.description}</p>
             <div className="flex justify-between items-end mt-auto">

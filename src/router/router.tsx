@@ -48,19 +48,23 @@ const router = createBrowserRouter([
             },
 
             {
-                path: "epics",
+                path: ":projectId",
+                element: <Navigate to="epics" replace />,
+            },
+            {
+                path: ":projectId/epics",
                 element: <div className="p-6">Project Epics Area</div>,
             },
             {
-                path: "tasks",
+                path: ":projectId/tasks",
                 element: <div className="p-6">Project Tasks Area</div>,
             },
             {
-                path: "members",
+                path: ":projectId/members",
                 element: <div className="p-6">Project Members Area</div>,
             },
             {
-                path: "details",
+                path: ":projectId/details",
                 element: <div className="p-6">Project Details Area</div>,
             },
         ],

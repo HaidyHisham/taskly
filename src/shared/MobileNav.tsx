@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { useAppSelector } from "@/shared/store/store";
 import LogoutBtn from "./LogoutBtn";
 
@@ -70,24 +70,30 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({ onMenuClick }) => {
 };
 
 export const MobileBottomNav: React.FC = () => {
+  const { projectId } = useParams();
+
   const menuItems = [
-    { path: "", label: "Projects", Icon: ProjectsIcon },
-    { path: "epics", label: "Epics", Icon: EpicsIcon },
-    { path: "tasks", label: "Tasks", Icon: TasksIcon },
-    { path: "members", label: "Members", Icon: MembersIcon },
-    { path: "details", label: "Details", Icon: DetailsIcon },
+    { path: "/project", label: "Projects", Icon: ProjectsIcon, end: true },
+    ...(projectId ? [
+      { path: `/project/${projectId}/epics`, label: "Epics", Icon: EpicsIcon, end: false },
+      { path: `/project/${projectId}/tasks`, label: "Tasks", Icon: TasksIcon, end: false },
+      { path: `/project/${projectId}/members`, label: "Members", Icon: MembersIcon, end: false },
+      { path: `/project/${projectId}/details`, label: "Details", Icon: DetailsIcon, end: false },
+    ] : [])
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 h-16 bg-surface-low border-t border-slate-200/80 flex items-center justify-around md:hidden z-30 px-2 pb-safe">
-      {menuItems.map(({ path, label, Icon }) => (
+      {menuItems.map(({ path, label, Icon, end }) => (
         <NavLink
           key={path}
           to={path}
-          end={path === ""}
+          end={end}
           className={({ isActive }) =>
             `flex flex-col items-center justify-center gap-1.5 flex-1 py-1 transition-colors ${
-              isActive ? "text-primary" : "text-slate-medium hover:text-slate-dark"
+              isActive
+                ? "text-primary"
+                : "text-slate-medium hover:text-slate-dark"
             }`
           }
         >
