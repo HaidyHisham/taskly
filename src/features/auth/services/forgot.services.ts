@@ -2,7 +2,8 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 export const forgotPasswordService = async (email: string) => {
-  const response = await fetch(`${BASE_URL}/auth/v1/recover`, {
+  const redirectUrl = `${window.location.origin}/reset-password`;
+  const response = await fetch(`${BASE_URL}/auth/v1/recover?redirect_to=${encodeURIComponent(redirectUrl)}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
