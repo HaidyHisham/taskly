@@ -3,7 +3,6 @@ import Button from '@/shared/Button';
 import ErrorIcon from '@/assets/icons/error.svg?react';
 
 export default function Error({
-    error,
     reset,
 }: {
     error: Error;
