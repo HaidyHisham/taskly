@@ -1,0 +1,92 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import AddProjectCard from "../components/AddProjectCard";
+import ProjectCard, { type IProject } from "../components/ProjectCard";
+import ProjectsHeader from "../components/ProjectHeader";
+import { getAccessToken, clearAuthData } from "@/features/auth/utils/auth";
+import { getProjects } from "../services/project.services";
+import Pagination from "@/shared/Pagination";
+import LinkButton from "@/shared/LinkButton";
+import PlusIcon from "@/assets/icons/plus.svg?react";
+import Loading from "../components/Loading";
+import ErrorState from "@/features/projects/components/ErrorState";
+import EmptyState from "../components/EmptyState";
+
+function ProjectsList() {
+    const navigate = useNavigate();
+    const [projects, setProjects] = useState<IProject[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchProjects = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            
+            const token = getAccessToken();
+            if (!token) {
+                throw new Error("No authenticated user found. Please login.");
+            }
+            const data = await getProjects({ accessToken: token });
+            setProjects(data || []);
+        } catch (err: any) {
+            console.error("Failed to retrieve projects:", err.message);
+            
+            
+            if (err.status === 401 || err.message?.includes("401") || err.message?.toLowerCase().includes("unauthorized")) {
+                clearAuthData();
+                navigate("/login");
+            } else {
+                setError(err.message || "Failed to retrieve projects.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProjects();
+    }, []);
+
+    return (
+        <section className="flex flex-col gap-10">
+            {isLoading ? (
+                <Loading />
+            ) : error ? (
+                <ErrorState error={new Error(error)} reset={fetchProjects} />
+            ) : projects.length === 0 ? (
+                <EmptyState />
+            ) : (
+                <>
+                    <ProjectsHeader />
+                    <div className="flex flex-col gap-8 w-full">
+                        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                            {projects.map((project) => (
+                                <ProjectCard key={project.id} project={project} />
+                            ))}
+                            <AddProjectCard />
+                        </section>
+
+
+                        <footer className="flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center">
+                            <p className="font-medium text-secondary text-xs">
+                                Showing 5 of 24 active projects
+                            </p>
+                            <Pagination />
+                        </footer>
+
+                        {/* mobile add project btn */}
+                        <LinkButton
+                            to={'/project/add'}
+                            className="lg:hidden fixed bottom-20 inset-e-[24px] z-99999 rounded-[12px]! size-14!"
+                        >
+                            <PlusIcon className="text-white size-3.5" />
+                        </LinkButton>
+                    </div>
+                </>
+            )}
+        </section>
+    );
+}
+
+export default ProjectsList;

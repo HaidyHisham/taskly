@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 
 import ProjectsIcon from "@/assets/icons/projects.svg?react";
 import EpicsIcon from "@/assets/icons/Epics.svg?react";
@@ -18,13 +18,16 @@ interface SidebarProps {
 
 function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { projectId } = useParams();
 
   const menuItems = [
-    { path: "", label: "Projects", Icon: ProjectsIcon },
-    { path: "epics", label: "Project Epics", Icon: EpicsIcon },
-    { path: "tasks", label: "Project Tasks", Icon: TasksIcon },
-    { path: "members", label: "Project Members", Icon: MembersIcon },
-    { path: "details", label: "Project Details", Icon: DetailsIcon },
+    { path: "/project", label: "Projects", Icon: ProjectsIcon, end: true },
+    ...(projectId ? [
+      { path: `/project/${projectId}/epics`, label: "Project Epics", Icon: EpicsIcon, end: false },
+      { path: `/project/${projectId}/tasks`, label: "Project Tasks", Icon: TasksIcon, end: false },
+      { path: `/project/${projectId}/members`, label: "Project Members", Icon: MembersIcon, end: false },
+      { path: `/project/${projectId}/details`, label: "Project Details", Icon: DetailsIcon, end: false },
+    ] : [])
   ];
 
   return (
@@ -50,11 +53,11 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
         </div>
 
         <nav className="flex-1 px-3 py-6 space-y-1">
-          {menuItems.map(({ path, label, Icon }) => (
+          {menuItems.map(({ path, label, Icon, end }) => (
             <NavLink
               key={path}
               to={path}
-              end={path === ""}
+              end={end}
               onClick={() => setIsMobileOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${

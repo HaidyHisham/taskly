@@ -5,7 +5,8 @@ import { isAuthenticated } from "@/features/auth/utils/auth";
 import MasterLayout from "@/layouts/MasterLayout";
 import ForgotPage from "@/features/auth/pages/ForgotPage";
 import ResetPage from "@/features/auth/pages/ResetPage";
-import AddProjectForm from "@/features/projects/components/AddProjectForm";
+import ProjectPage from "@/features/projects/pages/ProjectPage";
+import ProjectsList from "@/features/projects/pages/ProjectsList";
 
 
 const router = createBrowserRouter([
@@ -35,26 +36,35 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <div className="p-6">Projects Area</div>,
+                element: <ProjectsList />
             },
             {
                 path: "add",
-                element: <AddProjectForm />,
+                element: <ProjectPage mode="add" />
             },
             {
-                path: "epics",
+                path: "edit/:id",
+                element: <ProjectPage mode="edit" />
+            },
+
+            {
+                path: ":projectId",
+                element: <Navigate to="epics" replace />,
+            },
+            {
+                path: ":projectId/epics",
                 element: <div className="p-6">Project Epics Area</div>,
             },
             {
-                path: "tasks",
+                path: ":projectId/tasks",
                 element: <div className="p-6">Project Tasks Area</div>,
             },
             {
-                path: "members",
+                path: ":projectId/members",
                 element: <div className="p-6">Project Members Area</div>,
             },
             {
-                path: "details",
+                path: ":projectId/details",
                 element: <div className="p-6">Project Details Area</div>,
             },
         ],
