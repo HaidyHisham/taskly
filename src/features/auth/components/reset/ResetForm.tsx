@@ -12,7 +12,9 @@ import { toast } from "react-toastify"
 
 function ResetForm() {
   const [searchParams] = useSearchParams();
-  const accessToken = searchParams.get("access_token") || "";
+  const hashParams = new URLSearchParams(window.location.hash.substring(1));
+  const accessToken = hashParams.get("access_token") || searchParams.get("access_token") || "";
+
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
