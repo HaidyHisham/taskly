@@ -1,8 +1,12 @@
 
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import InitializeIcon from "@/assets/icons/initialize.svg?react"
 import ProjectForm from "../components/ProjectForm";
 import ProTipIcon from "@/assets/icons/protip.svg?react";
 import Breadcrumb from "@/shared/Breadcrumb";
+import { getAccessToken } from "@/features/auth/utils/auth";
+import { getProjects } from "../services/project.services";
 
 interface ProjectPageProps {
     mode: 'add' | 'edit';
@@ -11,11 +15,39 @@ interface ProjectPageProps {
 function ProjectPage({ mode }: ProjectPageProps) {
     const isAddForm = mode === 'add';
     const isEditForm = mode === 'edit';
+    const { projectId } = useParams<{ projectId?: string }>();
+    const [projectName, setProjectName] = useState<string>("");
 
-    const breadcrumbItems = [
-        { label: 'projects', path: '/project' },
-        { label: isAddForm ? 'add new project' : isEditForm ? 'edit project' : '' }
-    ];
+    useEffect(() => {
+        if (isEditForm && projectId) {
+            const loadProjectName = async () => {
+                try {
+                    const token = getAccessToken();
+                    if (token) {
+                        const projects = await getProjects({ accessToken: token });
+                        const currentProject = projects.find((p: any) => p.id === projectId);
+                        if (currentProject) {
+                            setProjectName(currentProject.name);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Failed to load project name for breadcrumb", error);
+                }
+            };
+            loadProjectName();
+        }
+    }, [isEditForm, projectId]);
+
+    const breadcrumbItems = isAddForm
+        ? [
+            { label: 'projects', path: '/project' },
+            { label: 'add new project' }
+        ]
+        : [
+            { label: 'projects', path: '/project' },
+            { label: projectName || 'project', path: `/project/${projectId}/epics` },
+            { label: 'edit' }
+        ];
 
     return (
 
