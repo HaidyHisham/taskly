@@ -10,6 +10,7 @@ import LinkButton from "@/shared/LinkButton";
 import PlusIcon from "@/assets/icons/plus.svg?react";
 import Loading from "../components/Loading";
 import ErrorState from "@/features/projects/components/ErrorState";
+import EmptyState from "../components/EmptyState";
 
 function ProjectsList() {
     const navigate = useNavigate();
@@ -21,8 +22,6 @@ function ProjectsList() {
         setIsLoading(true);
         setError(null);
         try {
-
-             throw new Error("Simulated network connection failure.");
             
             const token = getAccessToken();
             if (!token) {
@@ -55,6 +54,8 @@ function ProjectsList() {
                 <Loading />
             ) : error ? (
                 <ErrorState error={new Error(error)} reset={fetchProjects} />
+            ) : projects.length === 0 ? (
+                <EmptyState />
             ) : (
                 <>
                     <ProjectsHeader />
