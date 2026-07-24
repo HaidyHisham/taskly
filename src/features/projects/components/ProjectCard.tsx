@@ -29,7 +29,7 @@ function ProjectCard({ project }: IProps) {
                     {project?.name}
                 </h2>
                 <Link
-                    to={`/project/edit/${project.id}`}
+                    to={`/project/${project.id}/edit`}
                     onClick={(e) => e.stopPropagation()}
                     className="text-slate-medium hover:text-slate-dark cursor-pointer transition-colors p-1"
                 >

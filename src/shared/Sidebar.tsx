@@ -26,7 +26,7 @@ function Sidebar({ isMobileOpen, setIsMobileOpen }: SidebarProps) {
       { path: `/project/${projectId}/epics`, label: "Project Epics", Icon: EpicsIcon, end: false },
       { path: `/project/${projectId}/tasks`, label: "Project Tasks", Icon: TasksIcon, end: false },
       { path: `/project/${projectId}/members`, label: "Project Members", Icon: MembersIcon, end: false },
-      { path: `/project/${projectId}/details`, label: "Project Details", Icon: DetailsIcon, end: false },
+      { path: `/project/${projectId}/edit`, label: "Project Details", Icon: DetailsIcon, end: false },
     ] : [])
   ];
 
