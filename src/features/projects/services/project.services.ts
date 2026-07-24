@@ -33,3 +33,32 @@ export const createProject = async ({
     );
   }
 };
+/*projects list */
+export const getProjects = async ({
+  accessToken,
+}: {
+  accessToken: string;
+}) => {
+  try {
+    const response = await fetch(`${BASE_URL}/rest/v1/rpc/get_projects`, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        apikey: `${API_KEY}`,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (response.status !== 200) {
+      const result = await response.json();
+      throw new Error(result?.message || 'Failed to get projects');
+    }
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to get projects'
+    );
+  }
+};

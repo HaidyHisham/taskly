@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import DotsIcon from "@/assets/icons/dots.svg?react";
 
-interface IProject {
+export interface IProject {
     id: string;
     name: string;
     description: string;
