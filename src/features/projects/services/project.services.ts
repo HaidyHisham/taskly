@@ -162,3 +162,38 @@ export const updateProject = async ({
     throw new Error(errMsg);
   }
 };
+
+/* get single project by id */
+export const getProjectById = async ({
+  projectId,
+  accessToken,
+}: {
+  projectId: string;
+  accessToken: string;
+}) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/rest/v1/projects?id=eq.${projectId}`,
+      {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          apikey: `${API_KEY}`,
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const result = await response.json();
+      throw new Error(result?.message || 'Failed to get project');
+    }
+
+    const data = await response.json();
+    return Array.isArray(data) && data.length > 0 ? data[0] : null;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to get project'
+    );
+  }
+};
