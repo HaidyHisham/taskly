@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { IMember } from "../types/members.types";
 import { useMobile } from "@/shared/hooks/shared.hooks";
 import Badge from "@/shared/Badge";
@@ -10,85 +9,80 @@ interface IProps {
 }
 
 const MemberDetails = ({ member }: IProps) => {
-    const [avatarBg, _] = useState(Math.round(Math.random() * 255));
     const { isMobile } = useMobile(768);
 
     const memberInitials =
-        member?.metadata.name.split(' ').length > 1
-            ? member?.metadata.name
+        member?.metadata?.name?.split(' ').length > 1
+            ? member?.metadata?.name
                 .split(' ')
                 .slice(0, 2)
                 .map((w) => w[0])
                 .join('')
-            : member?.metadata.name.split('').slice(0, 2).join('');
+            : member?.metadata?.name?.slice(0, 2) || '??';
 
-    const roleStyle = {
-        viewer: 'bg-slate-lighter text-secondary',
+    const roleStyle: Record<string, string> = {
+        viewer: 'bg-surface-low text-secondary',
         member: 'bg-surface-highest text-secondary',
         owner: 'bg-primary-container text-white',
-        admin: 'bg-slate-dark text-slate-medium',
+        admin: 'bg-surface-highest text-primary-container',
     };
 
     const memberInfo = (
-        <div className="flex gap-4">
-            <div className={`flex items-center justify-center rounded-lg size-12`}
-                style={{ backgroundColor: `#${avatarBg}` }}>
-                <span className="text-surface-medium font-bold uppercase">
+        <div className="flex gap-4 items-center">
+            <div className="flex items-center justify-center rounded-lg size-12 shrink-0 bg-initials-bg text-primary-container">
+                <span className="font-bold text-sm uppercase">
                     {memberInitials}
                 </span>
-
             </div>
-            <div>
-                <h3 className="font-semibold text-slate-dark capitalize">
-                    {member?.metadata.name}
+            <div className="flex flex-col">
+                <h3 className="font-semibold text-slate-dark text-sm capitalize leading-tight">
+                    {member?.metadata?.name}
                 </h3>
-                <span className="text-label text-secondary">
-                    {member?.metadata.email}
+                <span className="text-xs text-secondary mt-0.5">
+                    {member?.metadata?.email}
                 </span>
             </div>
-
-
         </div>
     );
+
     const desktopView = (
         <>
-          
-            <td className="w-1/2 px-9 py-5">{memberInfo}</td>
+            {/* member details */}
+            <td className="w-1/2 px-9 py-4 text-left">{memberInfo}</td>
             {/* role */}
-            <td className="text-center w-1/4 px-9 py-5">
+            <td className="w-1/4 px-9 py-4 text-center">
                 <Badge
-                    className={`${roleStyle[member.role]} rounded-full! py-1! px-3!`}
+                    className={`${roleStyle[member?.role] || 'bg-surface-low text-secondary'} rounded-full! py-1! px-3.5! inline-block`}
                 >
-                    {' '}
-                    {member.role}{' '}
+                    {member?.role}
                 </Badge>
             </td>
-            
-            <td className=" w-1/4 px-9 py-5">
-                {member.role !== 'owner' && (
-                    <Button variant="ghost" className="p-1! justify-end">
-                        <DotsIcon className="text-secondary w-0.75" />
+            {/* action */}
+            <td className="w-1/4 px-9 py-4 text-right">
+                {member?.role !== 'owner' && (
+                    <Button variant="ghost" className="p-1.5! ms-auto">
+                        <DotsIcon className="text-secondary w-1 h-3.5" />
                     </Button>
                 )}
             </td>
-
         </>
     );
+
     const mobileView = (
-        <div className="flex justify-between gap-4 bg-white rounded-lg p-4 md:hidden">
+        <div className="flex justify-between items-center gap-4 bg-white rounded-lg p-4 md:hidden border border-slate-lighter">
             {memberInfo}
-          
-            <div className="flex gap-1 items-start">
-             
-                <Badge className={`${roleStyle[member.role]}`}>{member.role}</Badge>
-                {member.role !== 'owner' && (
+            {/* actions & role */}
+            <div className="flex gap-2 items-center">
+                <Badge className={`${roleStyle[member?.role] || 'bg-surface-low text-secondary'} rounded-full!`}>{member?.role}</Badge>
+                {member?.role !== 'owner' && (
                     <Button variant="ghost" className="p-1!">
-                        <DotsIcon className="text-secondary w-0.75" />
+                        <DotsIcon className="text-secondary w-1 h-3.5" />
                     </Button>
                 )}
             </div>
         </div>
     );
+
     return <>{isMobile ? mobileView : desktopView}</>;
 };
 
