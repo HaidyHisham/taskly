@@ -2,24 +2,27 @@ import Button from "@/shared/Button";
 import InviteMemeberIcon from "@/assets/icons/invite-member.svg?react";
 import { useMobile } from "@/shared/hooks/shared.hooks";
 import MemberDetails from "../components/MemberDetails";
-import type { IMember } from "../types/members.types";
+import { useAppDispatch, useAppSelector } from "@/shared/store/store";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { fetchMembers, resetMembers } from "@/shared/store/slices/members.slice";
 
-const dummyMember: IMember = {
-    member_id: "1",
-    project_id: "proj-1",
-    user_id: "user-1",
-    role: "owner",
-    metadata: {
-        sub: "user-1",
-        name: "Haidy Hesham",
-        email: "haidy@example.com",
-        job_title: "Frontend Developer",
-        email_verified: true,
-        phone_verified: false,
-    },
-};
+
 const MembersList = () => {
+     const { members } = useAppSelector((state) => state.members);
+  const dispatch = useAppDispatch();
+   const { projectId } = useParams();
     const { isMobile } = useMobile(768);
+
+     useEffect(() => {
+    if (projectId) {
+      dispatch(fetchMembers(projectId as string));
+    }
+
+    return () => {
+      dispatch(resetMembers());
+    };
+  }, [dispatch]);
   
     const desktopMembersView = (
         <table className="w-full hidden md:table table-fixed border-collapse rounded-lg overflow-hidden lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto">
@@ -39,7 +42,9 @@ const MembersList = () => {
             <tbody>
                 <tr className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row">
 
-                    <MemberDetails member={dummyMember} />
+                   {members.map((member) => (
+            <MemberDetails key={member?.member_id} member={member} />
+          ))}
 
                 </tr>
             </tbody>
@@ -49,7 +54,9 @@ const MembersList = () => {
   
     const mobileMembersView = (
         <div className="flex md:hidden flex-col gap-3">
-            <MemberDetails member={dummyMember} />
+                  {members.map((member) => (
+            <MemberDetails key={member?.member_id} member={member} />
+          ))}
         </div>
     );
 
