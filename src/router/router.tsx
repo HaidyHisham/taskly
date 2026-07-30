@@ -7,6 +7,7 @@ import ForgotPage from "@/features/auth/pages/ForgotPage";
 import ResetPage from "@/features/auth/pages/ResetPage";
 import ProjectPage from "@/features/projects/pages/ProjectPage";
 import ProjectsList from "@/features/projects/pages/ProjectsList";
+import MembersList from "@/features/members/pages/MembersList";
 
 
 const router = createBrowserRouter([
@@ -61,7 +62,7 @@ const router = createBrowserRouter([
             },
             {
                 path: ":projectId/members",
-                element: <div className="p-6">Project Members Area</div>,
+                element: <MembersList/>,
             },
             {
                 path: ":projectId/details",
