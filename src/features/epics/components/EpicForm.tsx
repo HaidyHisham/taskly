@@ -51,9 +51,9 @@ function EpicForm() {
 
             const cleanedData = {
                 ...data,
-                assignee_id: data.assignee_id || null,
-                description: data.description || null,
-                deadline: data.deadline || null,
+                assignee_id: data.assignee_id || undefined,
+                description: data.description || undefined,
+                deadline: data.deadline || undefined,
             };
 
             await createEpic({

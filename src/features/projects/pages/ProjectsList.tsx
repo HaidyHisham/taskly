@@ -13,7 +13,7 @@ import { useHandlePagination } from "../hooks/project.hook";
 function ProjectsList() {
     const {
         hasMore,
-        error,
+        
         loading,
         projects,
         totalCount,
