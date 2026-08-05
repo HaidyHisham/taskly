@@ -1,48 +1,79 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import BreadcrumbIcon from "@/assets/icons/breadcrumb.svg?react"
 
-export interface BreadcrumbItem {
-  label: React.ReactNode;
-  path?: string;
+import React from 'react';
+import ChevronRightIcon from '@/assets/icons/chevron-right.svg?react';
+
+import type { IProject } from '@/features/projects/components/ProjectCard';
+import { Link, useLocation, useParams } from 'react-router-dom';
+
+interface IProps {
+  projectItem?: IProject;
 }
 
-interface BreadcrumbProps {
-  items: BreadcrumbItem[];
-}
+const BreadCrumb: React.FC<IProps> = ({ projectItem }) => {
+  const pathname = useLocation().pathname;
+  const { projectId, epicId } = useParams();
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
+  const segments = pathname
+    .split('/')
+    .filter((item) => item !== '')
+    .slice(1);
+
   return (
-    <nav className="mb-4 hidden lg:block" aria-label="Breadcrumb">
-      <ol className="flex items-center gap-1.5 text-xs font-semibold tracking-[0.5px] text-slate-medium uppercase">
-        {items.map((item, index) => {
-          const isLast = index === items.length - 1;
+    <header className={`flex gap-2 ${segments.length !== 0 && 'mb-4'}`}>
+      {segments.length !== 0 && (
+        <Link
+          to={'/project'}
+          className={`text-secondary/60 text-body-sm uppercase font-bold letter-spacing-xl`}
+        >
+          Projects
+        </Link>
+      )}
+      {segments.map((segment, index) => {
+        if (segment === epicId) return;
 
-          return (
-            <React.Fragment key={index}>
-              <li>
-                {item.path && !isLast ? (
-                  <Link to={item.path} className="transition-colors hover:text-slate-dark text-secondary/60 text-xs tracking-[1.2px] uppercase">
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span className={isLast ? "text-primary font-bold tracking-[1.2px] uppercase text-xs" : ""}>
-                    {item.label}
-                  </span>
-                )}
-              </li>
+        const isLastSegment = index === segments.length - 1;
 
-              {!isLast && (
-                <li className="text-slate-light">
-                <BreadcrumbIcon />
-                </li>
-              )}
-            </React.Fragment>
-          );
-        })}
-      </ol>
-    </nav>
+        const to =
+          segment === projectId
+            ? `/project/${projectId}/edit`
+            : `/project/${segments.slice(0, index + 1).join('/')}`;
+
+        let label =
+          segment === projectId && projectItem?.name
+            ? projectItem?.name
+            : segment.replace(/-/g, ' ');
+
+        if (label.includes('add') && segments[index - 1] === 'project') {
+          label = 'add new project';
+        }
+
+        if (label.includes('new') && segments[index - 1] === 'epics') {
+          label = 'new epic';
+        }
+        if (label.includes('new') && segments[index - 1] === 'tasks') {
+          label = 'new task';
+        }
+
+        return (
+          <div className="flex font-bold gap-2" key={label}>
+            <ChevronRightIcon className="text-secondary/40 w-1" />
+            {!isLastSegment ? (
+              <Link
+                to={to}
+                className={`text-secondary/60 text-body-sm uppercase letter-spacing-xl`}
+              >
+                {label}
+              </Link>
+            ) : (
+              <span className="text-primary text-body-sm uppercase letter-spacing-xl">
+                {label}
+              </span>
+            )}
+          </div>
+        );
+      })}
+    </header>
   );
 };
 
-export default Breadcrumb;
+export default BreadCrumb;

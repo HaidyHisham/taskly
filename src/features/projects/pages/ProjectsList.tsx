@@ -5,7 +5,7 @@ import Pagination from "@/shared/Pagination";
 import LinkButton from "@/shared/LinkButton";
 import PlusIcon from "@/assets/icons/plus.svg?react";
 import Loading from "../components/Loading";
-import ErrorState from "@/features/projects/components/ErrorState";
+import ErrorState from "@/shared/ErrorState";
 import EmptyState from "../components/EmptyState";
 import ProjectSkeletonCard from "../components/ProjectsSkeletonCard";
 import { useHandlePagination } from "../hooks/project.hook";
@@ -13,7 +13,7 @@ import { useHandlePagination } from "../hooks/project.hook";
 function ProjectsList() {
     const {
         hasMore,
-        error,
+        
         loading,
         projects,
         totalCount,
@@ -21,11 +21,11 @@ function ProjectsList() {
         observerTarget,
     } = useHandlePagination();
 
-    // Guard 
+    
     if (loading === 'rejected') {
         return (
             <ErrorState
-                error={new Error(error || "Failed to retrieve projects.")}
+                item="projects"
                 reset={() => window.location.reload()}
             />
         );

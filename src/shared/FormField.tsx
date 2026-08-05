@@ -1,15 +1,22 @@
 import type { InputHTMLAttributes } from "react";
 import FormInput from "./FormInput";
 import TextArea from "./TextArea";
+import Select from "./Select";
 import {
   type FieldValues,
   useController,
   type UseControllerProps
 } from 'react-hook-form';
 
+
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
-  Omit<InputHTMLAttributes<HTMLInputElement>, 'defaultValue' | 'name'>,
+  Omit<
+    InputHTMLAttributes<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+    'defaultValue' | 'name'
+  >,
   Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
   label?: string;
   variant?: 'default' | 'error';
@@ -19,6 +26,7 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   containerClassName?: string;
   showPasswordToggle?: boolean;
   isTextArea?: boolean
+  isSelect?: boolean;
 }
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
@@ -38,6 +46,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     disabled,
     showPasswordToggle = true,
     isTextArea = false,
+    isSelect = false,
     ...restHtmlProps
   } = props;
 
@@ -65,8 +74,18 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
           variant={activeVariant}
           disabled={disabled}
           {...field}
-          {...(restHtmlProps as any)}
+          {...restHtmlProps}
         />
+      ) : isSelect ? (
+        <Select
+          id={label}
+          variant={activeVariant}
+          disabled={disabled}
+          {...field}
+          {...restHtmlProps}
+        >
+          {props.children}
+        </Select>
       ) : (
         <FormInput
           id={label}

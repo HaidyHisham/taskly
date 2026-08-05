@@ -1,13 +1,7 @@
 
-import { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
-import InitializeIcon from "@/assets/icons/initialize.svg?react"
+import InitializeIcon from "@/assets/icons/initialize.svg?react";
 import ProjectForm from "../components/ProjectForm";
 import ProTipIcon from "@/assets/icons/protip.svg?react";
-import Breadcrumb from "@/shared/Breadcrumb";
-import { getAccessToken } from "@/features/auth/utils/auth";
-import { getProjects } from "../services/project.services";
-import { toast } from "react-toastify";
 
 interface ProjectPageProps {
     mode: 'add' | 'edit';
@@ -16,57 +10,9 @@ interface ProjectPageProps {
 function ProjectPage({ mode }: ProjectPageProps) {
     const isAddForm = mode === 'add';
     const isEditForm = mode === 'edit';
-    const { projectId } = useParams<{ projectId?: string }>();
-    const location = useLocation();
-    const passedProject = location.state?.project;
-    const [projectName, setProjectName] = useState<string>(passedProject?.name || "");
-    const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        if (isEditForm && projectId && !projectName) {
-            const loadProjectName = async () => {
-                try {
-                    setIsLoading(true);
-                    const token = getAccessToken();
-                    if (token) {
-                        const projects = await getProjects({ accessToken: token });
-                        const currentProject = projects.find((p: any) => p.id === projectId);
-                        if (currentProject) {
-                            setProjectName(currentProject.name);
-                        }
-                    }
-                } catch (error) {
-                   toast.error(error instanceof Error ? error.message : "Failed to load project name")
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-            loadProjectName();
-        }
-    }, [isEditForm, projectId, projectName]);
-
-    const breadcrumbItems = isAddForm
-        ? [
-            { label: 'projects', path: '/project' },
-            { label: 'add new project' }
-        ]
-        : [
-            { label: 'projects', path: '/project' },
-            { 
-                label: isLoading ? (
-                    <span className="animate-pulse inline-block w-20 h-3 bg-slate-200 rounded-xs align-middle" />
-                ) : (
-                    projectName || 'project'
-                ), 
-                path: `/project/${projectId}/epics` 
-            },
-            { label: 'edit' }
-        ];
 
     return (
-
         <section>
-            <Breadcrumb items={breadcrumbItems} />
 
             <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full hidden lg:flex mb-8">
                 {isAddForm ? 'add new project' : isEditForm ? 'edit project' : ''}

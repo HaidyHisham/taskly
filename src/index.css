@@ -11,9 +11,11 @@
   --primary-container: #0052CC;
   --surface-highest: #D7E2FF;
   --surface-low: #F1F3FF;
+   --surface-md: #e0e8ff;
   --background-alt: #F9FDFF;
   --secondary: #434654;
   --secondary-light: #737685;
+  --initials-bg: #DAE2FF;
 
   /* Slate neutrals */
   --slate-dark: #041B3C;
@@ -72,9 +74,11 @@
   --color-primary-container: var(--primary-container);
   --color-surface-highest: var(--surface-highest);
   --color-surface-low: var(--surface-low);
+  --color-surface-md: var(--surface-md);
   --color-background: var(--background);
   --color-secondary: var(--secondary);
   --color-secondary-light: var(--secondary-light);
+  --color-initials-bg: var(--initials-bg);
 
 
   /* Slate slates */
