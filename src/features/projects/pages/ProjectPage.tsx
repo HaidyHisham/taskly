@@ -2,7 +2,6 @@
 import InitializeIcon from "@/assets/icons/initialize.svg?react";
 import ProjectForm from "../components/ProjectForm";
 import ProTipIcon from "@/assets/icons/protip.svg?react";
-import Breadcrumb from "@/shared/Breadcrumb";
 
 interface ProjectPageProps {
     mode: 'add' | 'edit';
@@ -14,7 +13,6 @@ function ProjectPage({ mode }: ProjectPageProps) {
 
     return (
         <section>
-            <Breadcrumb />
 
             <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full hidden lg:flex mb-8">
                 {isAddForm ? 'add new project' : isEditForm ? 'edit project' : ''}

@@ -8,7 +8,6 @@ import { useAppDispatch, useAppSelector } from "@/shared/store/store";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchMembers, resetMembers } from "@/shared/store/slices/members.slice";
-import BreadCrumb from "@/shared/Breadcrumb";
 
 const MembersList = () => {
     const { members, loading, error } = useAppSelector((state) => state.members);
@@ -84,7 +83,6 @@ const MembersList = () => {
 
     return (
         <section>
-            <BreadCrumb />
             {/* page header */}
             <header className="justify-between items-center flex mb-5 lg:mb-10">
                 <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 text-center lg:text-start w-full">

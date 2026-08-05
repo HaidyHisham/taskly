@@ -1,6 +1,5 @@
 import z from 'zod';
 
-/*  Add project schema  */
 export const addProjectSchema = z.object({
   name: z
     .string({

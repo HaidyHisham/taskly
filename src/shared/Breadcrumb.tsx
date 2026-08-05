@@ -1,34 +1,17 @@
-import { useEffect } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+
+import React from 'react';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg?react';
+
 import type { IProject } from '@/features/projects/components/ProjectCard';
-import { useAppDispatch, useAppSelector } from '@/shared/store/store';
-import { fetchProjectById } from '@/shared/store/slices/project.slice';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 interface IProps {
   projectItem?: IProject;
 }
 
-const BreadCrumb = ({ projectItem }: IProps) => {
-  const { pathname } = useLocation();
-  const { projectId } = useParams();
-  const dispatch = useAppDispatch();
-
-  const { currentProject, projects, currentProjectLoading } = useAppSelector(
-    (state) => state.project
-  );
-
-  const effectiveProject =
-    projectItem ||
-    (currentProject?.id === projectId
-      ? currentProject
-      : projects.find((p) => p.id === projectId));
-
-  useEffect(() => {
-    if (projectId && effectiveProject?.id !== projectId && currentProjectLoading !== 'pending') {
-      dispatch(fetchProjectById(projectId));
-    }
-  }, [projectId, effectiveProject?.id, currentProjectLoading, dispatch]);
+const BreadCrumb: React.FC<IProps> = ({ projectItem }) => {
+  const pathname = useLocation().pathname;
+  const { projectId, epicId } = useParams();
 
   const segments = pathname
     .split('/')
@@ -36,43 +19,53 @@ const BreadCrumb = ({ projectItem }: IProps) => {
     .slice(1);
 
   return (
-    <header className={`flex items-center gap-2 ${segments.length !== 0 && 'mb-4'}`}>
+    <header className={`flex gap-2 ${segments.length !== 0 && 'mb-4'}`}>
       {segments.length !== 0 && (
         <Link
           to={'/project'}
-          className={`text-secondary/60 text-[12px] uppercase font-bold tracking-[1.2px]`}
+          className={`text-secondary/60 text-body-sm uppercase font-bold letter-spacing-xl`}
         >
           Projects
         </Link>
       )}
       {segments.map((segment, index) => {
+        if (segment === epicId) return;
+
         const isLastSegment = index === segments.length - 1;
 
-        const href = `/project/${segments.slice(0, index + 1).join('/')}`;
-        let label = segment.replace(/-/g, ' ');
+        const to =
+          segment === projectId
+            ? `/project/${projectId}/edit`
+            : `/project/${segments.slice(0, index + 1).join('/')}`;
 
-        if (segment === projectId) {
-          if (effectiveProject?.name) {
-            label = effectiveProject.name;
-          } else if (currentProjectLoading === 'pending') {
-            label = 'Loading...';
-          }
+        let label =
+          segment === projectId && projectItem?.name
+            ? projectItem?.name
+            : segment.replace(/-/g, ' ');
+
+        if (label.includes('add') && segments[index - 1] === 'project') {
+          label = 'add new project';
         }
 
-        label = label.includes('add') ? 'add new project' : label;
+        if (label.includes('new') && segments[index - 1] === 'epics') {
+          label = 'new epic';
+        }
+        if (label.includes('new') && segments[index - 1] === 'tasks') {
+          label = 'new task';
+        }
 
         return (
-          <div className="flex items-center font-bold gap-2" key={segment}>
-            <ChevronRightIcon className="text-secondary/40 w-3 h-3" />
+          <div className="flex font-bold gap-2" key={label}>
+            <ChevronRightIcon className="text-secondary/40 w-1" />
             {!isLastSegment ? (
               <Link
-                to={href}
-                className={`text-secondary/60 text-[12px] uppercase tracking-[1.2px]`}
+                to={to}
+                className={`text-secondary/60 text-body-sm uppercase letter-spacing-xl`}
               >
                 {label}
               </Link>
             ) : (
-              <span className="text-primary text-[12px] uppercase tracking-[1.2px]">
+              <span className="text-primary text-body-sm uppercase letter-spacing-xl">
                 {label}
               </span>
             )}

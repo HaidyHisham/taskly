@@ -8,6 +8,7 @@ import ResetPage from "@/features/auth/pages/ResetPage";
 import ProjectPage from "@/features/projects/pages/ProjectPage";
 import ProjectsList from "@/features/projects/pages/ProjectsList";
 import MembersList from "@/features/members/pages/MembersList";
+import AddNewEpic from "@/features/epics/pages/AddNewEpic";
 
 
 const router = createBrowserRouter([
@@ -52,9 +53,13 @@ const router = createBrowserRouter([
                 path: ":projectId",
                 element: <Navigate to="epics" replace />,
             },
+            // {
+            //     path: ":projectId/epics",
+            //     element: <AddNewEpic />
+            // },
             {
-                path: ":projectId/epics",
-                element: <div className="p-6">Project Epics Area</div>,
+                path: ":projectId/epics/new",
+                element: <AddNewEpic />
             },
             {
                 path: ":projectId/tasks",
@@ -68,6 +73,7 @@ const router = createBrowserRouter([
                 path: ":projectId/details",
                 element: <div className="p-6">Project Details Area</div>,
             },
+
         ],
     },
 ]);
