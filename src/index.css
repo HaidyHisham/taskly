@@ -28,6 +28,9 @@
   --success-mint: #82F9BE;
   --error: #B71C1C;
   --warning: #FFB300;
+  --success-dark:#65DCA4;
+  --green-dark:#005235;
+  
 
   /* Custom Spacing */
   --spacing-xs: 0.25rem;
@@ -92,6 +95,7 @@
   --color-success-mint: var(--success-mint);
   --color-error: var(--error);
   --color-warning: var(--warning);
+  --color-success-dark: var(--success-dark);
 
   /* Font variables */
   --text-heading-1: var(--heading-1);
