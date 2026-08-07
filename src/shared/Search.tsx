@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes } from 'react';
 
-import SearchIcon from '@/assets/icons/Search.svg?react';
+import SearchIcon from '@/assets/icons/search.svg?react';
 import FormInput from './FormInput';
 
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {}
