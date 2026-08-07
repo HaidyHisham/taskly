@@ -9,7 +9,6 @@ import ProjectPage from "@/features/projects/pages/ProjectPage";
 import ProjectsList from "@/features/projects/pages/ProjectsList";
 import MembersList from "@/features/members/pages/MembersList";
 import AddNewEpic from "@/features/epics/pages/AddNewEpic";
-import EpicItem from "@/features/epics/components/EpicItem";
 import EpicList from "@/features/epics/pages/EpicList";
 
 

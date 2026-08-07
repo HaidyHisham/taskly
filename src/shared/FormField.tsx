@@ -1,14 +1,13 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import FormInput from "./FormInput";
 import TextArea from "./TextArea";
-import Select, { type SelectOption } from "./SelectField";
+import { type SelectOption } from "./SelectField";
 import {
   type FieldValues,
   useController,
   type UseControllerProps
 } from 'react-hook-form';
 import SelectField from "./SelectField";
-
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
@@ -19,7 +18,7 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
     'defaultValue' | 'name' | 'options' | 'components' | 'onChange'
   >,
   Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
-  label: string;
+  label?: string;
   variant?: 'default' | 'error';
   fieldMsg?: string;
   containerClassName?: string;
@@ -32,9 +31,12 @@ interface IProps<TFieldValues extends FieldValues = FieldValues>
   iconClassName?: string;
   inputClassName?: string;
   customOptionComponents?: Record<string, React.ComponentType<any>>;
+  isSearchable?: boolean;
+  reset?: boolean;
+  isOptional?: boolean;
+  showPasswordToggle?: boolean;
   onChange?: (value: any) => void;
 }
-
 
 const FormField = <TFieldValues extends FieldValues = FieldValues>(
   props: IProps<TFieldValues>
@@ -54,6 +56,10 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     isTextArea = false,
     isSelect = false,
     customOptionComponents,
+    isSearchable = false,
+    reset = false,
+    showPasswordToggle = true,
+    isOptional = false,
     options = [],
     children,
     isEditing,
@@ -94,6 +100,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
           options={options}
           name={field.name}
           ref={field.ref}
+          isSearchable={isSearchable}
           components={customOptionComponents}
           value={options.find((opt) => opt.value === field.value) || null}
           onChange={(val) => {
@@ -111,6 +118,8 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
           id={label}
           variant={activeVariant}
           disabled={disabled}
+          reset={reset}
+          showPasswordToggle={showPasswordToggle}
           {...field}
           onChange={(e) => {
             field.onChange(e);

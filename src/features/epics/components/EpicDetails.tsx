@@ -44,7 +44,7 @@ function EpicDetails({ epic, onClose }: IProps) {
         getValues,
         trigger,
         getFieldState,
-        formState: { errors },
+        formState: { errors }
     } = useForm<TEpicsInput>({
         resolver: zodResolver(epicsSchema),
         mode: 'onBlur',
@@ -66,7 +66,7 @@ function EpicDetails({ epic, onClose }: IProps) {
         }
     }, [projectId, dispatch, members.length]);
 
-    
+
     const onHandleSubmitEpic = async (data: Record<string, any>) => {
         try {
             await dispatch(updateEpicThunk({ epicId: epic.id, data })).unwrap();
@@ -81,7 +81,12 @@ function EpicDetails({ epic, onClose }: IProps) {
 
     const handleUpdateEpic = async (fieldName: keyof TEpicsInput) => {
         const isFieldValid = await trigger(fieldName);
-        const { isDirty: isFieldDirty } = getFieldState(fieldName);
+        const { isDirty: isFieldDirty, error } = getFieldState(fieldName);
+
+        if (!isFieldValid && error?.message) {
+            toast.error(error.message);
+            return;
+        }
 
         if (isFieldValid && isFieldDirty) {
             if (fieldName === 'assignee_id' && getValues(fieldName) === '') {
@@ -169,6 +174,7 @@ function EpicDetails({ epic, onClose }: IProps) {
                     <Label
                         htmlFor="description"
                         className="lg:hidden text-label-sm text-secondary uppercase"
+                         activeVariant={errors.description ? 'error' : 'default'}
                     >
                         description
                     </Label>
@@ -209,6 +215,7 @@ function EpicDetails({ epic, onClose }: IProps) {
                         <Label
                             htmlFor="assignee_id"
                             className={metaLabelStyle}
+                             activeVariant={errors.assignee_id ? 'error' : 'default'}
                         >
                             assignee
                         </Label>
@@ -236,6 +243,7 @@ function EpicDetails({ epic, onClose }: IProps) {
                             <Label
                                 htmlFor="deadline"
                                 className={metaLabelStyle}
+                                activeVariant={errors.deadline ? 'error' : 'default'}
                             >
                                 deadline
                             </Label>
