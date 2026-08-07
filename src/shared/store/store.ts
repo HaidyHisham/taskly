@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import authReducer from '@/shared/store/slices/auth.slice';
 import projectReducer from '@/shared/store/slices/project.slice';
 import membersReducer from '@/shared/store/slices/members.slice';
+import epicsReducer from '@/shared/store/slices/epics.slice';
 
 export const makeStore = () => {
   return configureStore({
@@ -10,6 +11,7 @@ export const makeStore = () => {
       auth: authReducer,
       project: projectReducer,
       members: membersReducer,
+      epics: epicsReducer,
     },
   });
 };

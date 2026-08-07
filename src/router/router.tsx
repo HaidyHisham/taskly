@@ -9,6 +9,7 @@ import ProjectPage from "@/features/projects/pages/ProjectPage";
 import ProjectsList from "@/features/projects/pages/ProjectsList";
 import MembersList from "@/features/members/pages/MembersList";
 import AddNewEpic from "@/features/epics/pages/AddNewEpic";
+import EpicList from "@/features/epics/pages/EpicList";
 
 
 const router = createBrowserRouter([
@@ -53,10 +54,14 @@ const router = createBrowserRouter([
                 path: ":projectId",
                 element: <Navigate to="epics" replace />,
             },
-            // {
-            //     path: ":projectId/epics",
-            //     element: <AddNewEpic />
-            // },
+            {
+                path: ":projectId/epics",
+                element: <EpicList />
+            },
+            {
+                path: ":projectId/epics/:epicId",
+                element: <EpicList />
+            },
             {
                 path: ":projectId/epics/new",
                 element: <AddNewEpic />
@@ -67,7 +72,7 @@ const router = createBrowserRouter([
             },
             {
                 path: ":projectId/members",
-                element: <MembersList/>,
+                element: <MembersList />,
             },
             {
                 path: ":projectId/details",
