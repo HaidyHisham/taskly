@@ -12,6 +12,7 @@ export interface SelectOption {
   label: string;
   components?: Record<string, React.ComponentType<any>>;
   isEditing?: boolean;
+  icon?: React.ReactNode;
 }
 
 interface IProps extends Omit<

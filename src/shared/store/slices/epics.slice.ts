@@ -1,7 +1,8 @@
 import { type IEpics } from '@/features/epics/types/epics.types';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getAccessToken } from '@/features/auth/utils/auth';
-import { getEpics, getEpicById } from '@/features/epics/services/epics.services';
+import { getEpics, getEpicById, updateEpic } from '@/features/epics/services/epics.services';
+import type { TEpicsInput } from '@/features/epics/schemas/epics.schema';
 
 // fetch epics for a project
 export const fetchEpics = createAsyncThunk(
@@ -37,6 +38,28 @@ export const fetchEpicById = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : 'Unknown error'
+      );
+    }
+  }
+);
+
+// update epic by id
+export const updateEpicThunk = createAsyncThunk(
+  'epics/update',
+  async (
+    { epicId, data }: { epicId: string; data: Partial<TEpicsInput> },
+    { rejectWithValue }
+  ) => {
+    try {
+      const token = getAccessToken();
+      if (!token) {
+        throw new Error('No authenticated user found. Please login.');
+      }
+      await updateEpic({ epicId, data, accessToken: token });
+      return { epicId, data };
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Failed to update epic'
       );
     }
   }
@@ -89,6 +112,18 @@ const epicsSlice = createSlice({
             );
           }
         }
+      })
+      .addCase(updateEpicThunk.fulfilled, (state, action) => {
+        const { epicId, data } = action.payload;
+        state.epics = state.epics.map((e) => {
+          if (e.id === epicId) {
+            return {
+              ...e,
+              ...data,
+            };
+          }
+          return e;
+        });
       });
   },
 });

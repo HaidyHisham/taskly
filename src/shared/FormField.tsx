@@ -12,13 +12,13 @@ import SelectField from "./SelectField";
 
 interface IProps<TFieldValues extends FieldValues = FieldValues>
   extends
-    Omit<
-      InputHTMLAttributes<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >,
-      'defaultValue' | 'name' | 'options' | 'components' | 'onChange'
+  Omit<
+    InputHTMLAttributes<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
-    Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
+    'defaultValue' | 'name' | 'options' | 'components' | 'onChange'
+  >,
+  Omit<UseControllerProps<TFieldValues>, 'defaultValue'> {
   label: string;
   variant?: 'default' | 'error';
   fieldMsg?: string;
@@ -63,13 +63,13 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
     ...restHtmlProps
   } = props;
 
-const activeVariant = fieldState.error ? 'error' : variant;
+  const activeVariant = fieldState.error ? 'error' : variant;
 
   const containerStyle = `bg-transparent focus-within:outline-0! focus-visible:outline-0! p-0!`;
 
   const inputStyle = `py-0! px-0!`;
 
- return (
+  return (
     <div className={`flex flex-col gap-1.5 w-full ${containerClassName}`}>
       {isTextArea ? (
         <TextArea
@@ -86,7 +86,7 @@ const activeVariant = fieldState.error ? 'error' : variant;
           {...restHtmlProps}
           className={`${isEditing ? containerStyle : ''} ${restHtmlProps.className}`}
         />
-        ) : isSelect ? (
+      ) : isSelect ? (
         <SelectField
           id={label}
           variant={activeVariant}
@@ -124,7 +124,7 @@ const activeVariant = fieldState.error ? 'error' : variant;
           className={`${isEditing ? containerStyle : ''} ${restHtmlProps.className}`}
         />
       )}
-      
+
       {fieldState.error ? (
         <p className="text-error text-label">{fieldState.error.message}</p>
       ) : (
