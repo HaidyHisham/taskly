@@ -36,6 +36,12 @@ function EpicForm() {
             deadline: '',
         },
     });
+    const membersOptions = projectMembers?.map((member) => {
+        return {
+            value: member?.user_id,
+            label: member?.metadata?.name,
+        };
+    });
 
     const descriptionWatcher = watch('description');
     const onSubmit = async (data: TEpicsInput) => {
@@ -123,29 +129,23 @@ function EpicForm() {
 
             </div>
             <div className="flex flex-col lg:flex-row gap-9 mb-10">
-                <div className="flex flex-col gap-1.5 flex-1">
-                    <Label
-                        htmlFor="assignee_id"
-                        className="flex! flex-row! lg:flex-col! justify-between! items-center! lg:justify-start! lg:items-start! w-1/6"
-                        activeVariant={errors.assignee_id ? 'error' : 'default'}
-                    >
-                        assignee
-                    </Label>
-                    <FormField
-                        control={control}
-                        name="assignee_id"
-                        containerClassName="flex-1"
-                        isSelect
-                        disabled={isLoading}
-                    >
-                        <option value="">Select a member...</option>
-                        {projectMembers.map((member) => (
-                            <option key={member.user_id} value={member.user_id}>
-                                {member.metadata?.name || member.metadata?.email}
-                            </option>
-                        ))}
-                    </FormField>
-                </div>
+                 <div className="flex flex-col gap-1.5 flex-1">
+          <Label
+            htmlFor="assignee_id"
+            className="flex! flex-row! lg:flex-col! justify-between! items-center! lg:justify-start! lg:items-start! w-1/6"
+            activeVariant={errors.assignee_id ? 'error' : 'default'}
+          >
+            assignee
+          </Label>
+          <FormField
+            control={control}
+            name="assignee_id"
+            containerClassName="flex-1"
+            isSelect
+            placeholder="Select a member..."
+            options={membersOptions}
+          />
+        </div>
                 <div className="flex flex-col gap-1.5 flex-1">
                     <Label
                         htmlFor="deadline"

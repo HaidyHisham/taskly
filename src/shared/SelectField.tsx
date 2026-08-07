@@ -38,7 +38,7 @@ const SelectField = ({
 }: IProps) => {
   const selectVariants = {
     default:
-      'bg-surface-high text-secondary focus-within:outline-primary focus-visible:outline-primary',
+      'bg-surface-highest text-secondary focus-within:outline-primary focus-visible:outline-primary',
     error:
       'bg-error-background text-error-dark focus-within:outline-error-dark focus-visible:outline-error-dark',
   };

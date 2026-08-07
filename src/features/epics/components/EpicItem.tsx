@@ -3,7 +3,7 @@ import { type IEpics } from "../types/epics.types";
 import Button from "@/shared/Button";
 import DotsIcon from "@/assets/icons/dots.svg?react";
 import CreatedByIcon from "@/assets/icons/createdby.svg?react";
-import CalenderIcon from "@/assets/icons/calendar.svg?react";
+import CalenderIcon from "@/assets/icons/Calendar.svg?react";
 import { Link } from "react-router-dom";
 interface IProps {
     epicItem: IEpics;

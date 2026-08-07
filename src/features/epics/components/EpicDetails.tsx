@@ -11,7 +11,7 @@ import { formateDateString, getNameInitials } from "@/shared/utils/utils";
 import { fetchMembers } from "@/shared/store/slices/members.slice";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/shared/store/store";
-import CalenderIcon from "@/assets/icons/calendar.svg?react";
+import CalenderIcon from "@/assets/icons/Calendar.svg?react";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "@/shared/store/store";
 import { components, type OptionProps } from "react-select";
