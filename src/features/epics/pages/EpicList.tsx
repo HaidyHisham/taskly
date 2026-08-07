@@ -4,7 +4,7 @@ import LinkButton from "@/shared/LinkButton";
 import PlusIcon from "@/assets/icons/plus.svg?react";
 import EpicItem from "../components/EpicItem";
 import { useAppDispatch, useAppSelector } from "@/shared/store/store";
-import { fetchEpics, resetEpics } from "@/shared/store/slices/epics.slice";
+import { fetchEpics, resetEpics, fetchEpicById } from "@/shared/store/slices/epics.slice";
 import Search from "@/shared/Search";
 import Button from "@/shared/Button";
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg?react';
@@ -12,9 +12,10 @@ import ChevronRightIcon from '@/assets/icons/chevron-right.svg?react';
 import LoadingEpics from "../components/LoadingEpics";
 import ErrorState from "@/shared/ErrorState";
 import EmptyEpics from "../components/EmptyEpics";
+import EpicModal from "../components/EpicModal";
 
 function EpicList() {
-    const { projectId } = useParams();
+    const { projectId, epicId } = useParams();
     const dispatch = useAppDispatch();
     const { epics, loading, error } = useAppSelector((state) => state.epics);
 
@@ -26,6 +27,15 @@ function EpicList() {
             dispatch(resetEpics());
         };
     }, [dispatch, projectId]);
+
+    const selectedEpic = epics.find((epic) => epic.id === epicId);
+
+    useEffect(() => {
+        if (projectId && epicId && !selectedEpic) {
+            dispatch(fetchEpicById({ projectId, epicId }));
+        }
+    }, [dispatch, projectId, epicId, selectedEpic]);
+
     if (loading === 'pending') return <LoadingEpics />;
 
     if (loading === 'rejected') {
@@ -102,6 +112,7 @@ function EpicList() {
                     </Button>
                 </div>
             </footer>
+            {selectedEpic && <EpicModal epic={selectedEpic} />}
         </section>
     );
 }

@@ -8,6 +8,7 @@ interface IProps {
     to: string;
     className?: string;
     btnClassName?: string;
+    variant?: 'primary' | 'secondary' | 'ghost' | 'tertiay';
 }
 
 const LinkButton: React.FC<IProps> = ({
@@ -15,9 +16,10 @@ const LinkButton: React.FC<IProps> = ({
     to,
     className,
     btnClassName,
+    variant = 'primary',
 }) => {
     return (
-        <Button className={`w-fit! p-0! font-medium! flex ${className} ${btnClassName}`}>
+        <Button variant={variant} className={`w-fit! p-0! font-medium! flex ${className} ${btnClassName}`}>
             <Link
                 to={to}
                 className="w-full h-full px-6! py-3! flex gap-1.75 items-center justify-center"

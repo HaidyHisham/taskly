@@ -1,13 +1,17 @@
-import { useState, type InputHTMLAttributes } from "react";
+import { useState, type InputHTMLAttributes, type ReactNode } from "react";
 import Eye from "@assets/icons/Eye.svg?react"
 import EyeOff from "@assets/icons/eye-off.svg?react"
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'error';
   reset?: boolean;
   showPasswordToggle?: boolean;
+  inputClassName?: string;
+  iconClassName?: string;
+  icon?: ReactNode;
+  showPassIcon?: boolean;
 }
 
-const FormInput: React.FC<IProps> = ({ variant = 'default', reset = false, showPasswordToggle = true, ...props }) => {
+const FormInput: React.FC<IProps> = ({ variant = 'default', reset = false, showPasswordToggle = true, inputClassName = '', iconClassName = '', icon, showPassIcon = true, ...props }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
 
   const containerVariants = {
@@ -29,7 +33,7 @@ const FormInput: React.FC<IProps> = ({ variant = 'default', reset = false, showP
   return (
     <div className={`w-full flex justify-between items-center gap-0.5 rounded-4px focus-within:outline-1 focus-visible:outline-1 ${containerVariants[variant]} ${props.className}`}>
       <input {...props} 
-      className={`w-full focus-within:outline-0 focus-visible:outline-0 px-4 py-3.5 bg-transparent ${inputVariants[variant]}`}
+      className={`w-full focus-within:outline-0 focus-visible:outline-0 px-4 py-3.5 bg-transparent ${inputVariants[variant]} ${inputClassName}`}
         type={props.type === "password" ? (showPasswordToggle && isPasswordShown) ? "text" : "password" : props.type} />
 
       {props.type === "password" && showPasswordToggle && (
@@ -42,6 +46,10 @@ const FormInput: React.FC<IProps> = ({ variant = 'default', reset = false, showP
           )}
         </div>
       )}
+      {/* icon */}
+      {icon && 
+      <div className={`px-4 py-3.5 ${iconClassName}`}>{icon}
+        </div>}
 
     </div>
   );

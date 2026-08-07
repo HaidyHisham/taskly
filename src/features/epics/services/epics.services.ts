@@ -66,3 +66,39 @@ export const getEpics = async ({
         );
     }
 };
+
+export const getEpicById = async ({
+    projectId,
+    epicId,
+    accessToken,
+}: {
+    projectId: string;
+    epicId: string;
+    accessToken: string;
+}) => {
+    try {
+        const response = await fetch(
+            `${BASE_URL}/rest/v1/project_epics?project_id=eq.${projectId}&id=eq.${epicId}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    apikey: `${API_KEY}`,
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            const result = await response.json();
+            throw new Error(result?.message || 'Failed to fetch epic details');
+        }
+
+        const data = await response.json();
+        return data[0] || null;
+    } catch (error) {
+        throw new Error(
+            error instanceof Error ? error.message : 'Failed to fetch epic details'
+        );
+    }
+};

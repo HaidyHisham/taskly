@@ -4,6 +4,7 @@ import Button from "@/shared/Button";
 import DotsIcon from "@/assets/icons/dots.svg?react";
 import CreatedByIcon from "@/assets/icons/createdby.svg?react";
 import CalenderIcon from "@/assets/icons/calendar.svg?react";
+import { Link } from "react-router-dom";
 interface IProps {
     epicItem: IEpics;
 }
@@ -136,8 +137,10 @@ function EpicItem({ epicItem }: IProps) {
 
     return (
         <>
-            {desktopView}
-            {mobileView}
+            <Link to={`/project/${epicItem?.project_id}/epics/${epicItem?.id}`}>
+                {desktopView}
+                {mobileView}
+            </Link>
         </>
     );
 

@@ -60,6 +60,10 @@ const router = createBrowserRouter([
                 element: <EpicList />
             },
             {
+                path: ":projectId/epics/:epicId",
+                element: <EpicList />
+            },
+            {
                 path: ":projectId/epics/new",
                 element: <AddNewEpic />
             },

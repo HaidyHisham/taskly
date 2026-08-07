@@ -149,10 +149,44 @@
 @utility form-headline{
   @apply text-[30px] md:text-3xl leading-9 tracking-[-0.75px] text-slate-dark font-semibold;
 }
+@utility light-gradient {
+  @apply bg-linear-[135deg] from-white to-surface-low from-5% lg:from-white lg:to-white;
+  color: var(--slate-dark);
+}
 
 /*----------------------------- base style ----------------------------- */
 body {
   background: var(--background);
   color: var(--foreground);
   font-size: 14px;
+}
+/* scrollbar style */
+.modal-container {
+  scrollbar-width: none;
+}
+
+.modal-container.is-scrolling {
+  scrollbar-width: thin;
+}
+
+.modal-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-container::-webkit-scrollbar-track,
+.modal-container::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.modal-container.is-scrolling::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.modal-container.is-scrolling::-webkit-scrollbar-thumb {
+  background: #888888;
+}
+
+.modal-container::-webkit-scrollbar-button {
+  display: none;
 }
