@@ -1,10 +1,8 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import LinkButton from "@/shared/LinkButton";
 import PlusIcon from "@/assets/icons/plus.svg?react";
 import EpicItem from "../components/EpicItem";
-import { useAppDispatch, useAppSelector } from "@/shared/store/store";
-import { fetchEpics, resetEpics, fetchEpicById } from "@/shared/store/slices/epics.slice";
 import Search from "@/shared/Search";
 import Button from "@/shared/Button";
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg?react';
@@ -13,39 +11,58 @@ import LoadingEpics from "../components/LoadingEpics";
 import ErrorState from "@/shared/ErrorState";
 import EmptyEpics from "../components/EmptyEpics";
 import EpicModal from "../components/EpicModal";
+import { useGetEpicsQuery } from "../services/epicsApi";
 
 function EpicList() {
     const { projectId, epicId } = useParams();
-    const dispatch = useAppDispatch();
-    const { epics, loading, error } = useAppSelector((state) => state.epics);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const limit = 6;
 
     useEffect(() => {
-        if (projectId) {
-            dispatch(fetchEpics(projectId));
+        setCurrentPage(1);
+    }, [projectId]);
+
+    const { data, isLoading, isError, error, refetch, isFetching } = useGetEpicsQuery(
+        {
+            projectId: projectId || "",
+            page: currentPage,
+            limit,
+        },
+        {
+            skip: !projectId,
+            refetchOnMountOrArgChange: true,
         }
-        return () => {
-            dispatch(resetEpics());
-        };
-    }, [dispatch, projectId]);
+    );
+
+    const epics = data?.project_epics || [];
+    const totalCount = data?.totalCount || 0;
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const getPageNumbers = (current: number, total: number) => {
+        if (total <= 5) {
+            return Array.from({ length: total }, (_, i) => i + 1);
+        }
+        if (current <= 3) {
+            return [1, 2, 3, '...', total];
+        }
+        if (current >= total - 2) {
+            return [1, '...', total - 2, total - 1, total];
+        }
+        return [1, '...', current, '...', total];
+    };
 
     const selectedEpic = epics.find((epic) => epic.id === epicId);
 
-    useEffect(() => {
-        if (projectId && epicId && !selectedEpic) {
-            dispatch(fetchEpicById({ projectId, epicId }));
-        }
-    }, [dispatch, projectId, epicId, selectedEpic]);
+    // Handle States
+    if (isLoading || isFetching) return <LoadingEpics />;
 
-    if (loading === 'pending') return <LoadingEpics />;
-
-    if (loading === 'rejected') {
+    if (isError) {
         return (
             <ErrorState
                 item="project epics"
-                message={error || undefined}
-                reset={() => {
-                    if (projectId) dispatch(fetchEpics(projectId));
-                }}
+                message={(error as any)?.data?.message || "Failed to load epics"}
+                reset={() => refetch()}
             />
         );
     }
@@ -79,39 +96,69 @@ function EpicList() {
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10">
+            {/* Epics Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10 min-h-90">
                 {epics.map((epic) => (
                     <EpicItem key={epic.id} epicItem={epic} />
                 ))}
             </div>
 
+            {/* Pagination Footer */}
             <footer className="flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center mt-8 pb-10">
                 <p className="font-medium text-secondary text-[12px]">
-                    Showing {epics.length} of {epics.length} active epics
+                    Showing {epics.length} of {totalCount} epics
                 </p>
-                <div className="flex gap-2">
+
+                <div className="flex gap-2 items-center">
+                    {/* Previous Button */}
                     <Button
                         variant="ghost"
                         className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! disabled:opacity-50"
-                        disabled
+                        disabled={currentPage === 1 || isFetching}
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                     >
                         <ChevronLeftIcon className="w-1" />
                     </Button>
-                    <Button
-                        variant="ghost"
-                        className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! bg-primary! text-white!"
-                    >
-                        1
-                    </Button>
+
+                    {/* Page Numbers */}
+                    {getPageNumbers(currentPage, totalPages).map((page, idx) =>
+                        typeof page === 'number' ? (
+                            <Button
+                                key={idx}
+                                variant="ghost"
+                                className={`rounded-[2px]! size-[32px]! p-0! font-bold! text-[12px]! ${page === currentPage
+                                    ? 'bg-primary! text-white! border border-primary!'
+                                    : 'bg-[#f4f6fa] text-secondary border-0 hover:bg-slate-light/20'
+                                    }`}
+                                disabled={isFetching}
+                                onClick={() => setCurrentPage(page)}
+                            >
+                                {page}
+                            </Button>
+                        ) : (
+                            <span
+                                key={idx}
+                                className="size-[32px] flex items-center justify-center text-secondary text-[12px] font-bold"
+                            >
+                                ...
+                            </span>
+                        )
+                    )}
+
+                    {/* Next Button */}
                     <Button
                         variant="ghost"
                         className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! disabled:opacity-50"
-                        disabled
+                        disabled={currentPage >= totalPages || isFetching || totalPages === 0}
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
                     >
                         <ChevronRightIcon className="w-1" />
                     </Button>
                 </div>
             </footer>
+
+    
+
             {selectedEpic && <EpicModal epic={selectedEpic} />}
         </section>
     );
