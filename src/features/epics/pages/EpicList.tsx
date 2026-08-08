@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import LinkButton from "@/shared/LinkButton";
 import PlusIcon from "@/assets/icons/plus.svg?react";
@@ -12,18 +12,16 @@ import ErrorState from "@/shared/ErrorState";
 import EmptyEpics from "../components/EmptyEpics";
 import EpicModal from "../components/EpicModal";
 import { useGetEpicsQuery } from "../services/epicsApi";
+import { useHandlePagination } from "@/shared/hooks/useHandlePagination";
+import type { IEpics } from "../types/epics.types";
 
 function EpicList() {
     const { projectId, epicId } = useParams();
 
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const limit = 6;
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [projectId]);
-
-    const { data, isLoading, isError, error, refetch, isFetching } = useGetEpicsQuery(
+    const { data: epics, isLoading, isFetching, isError, error, refetch } = useGetEpicsQuery(
         {
             projectId: projectId || "",
             page: currentPage,
@@ -35,9 +33,24 @@ function EpicList() {
         }
     );
 
-    const epics = data?.project_epics || [];
-    const totalCount = data?.totalCount || 0;
+    const incomingEpics = epics?.project_epics || [];
+    const totalCount = epics?.totalCount || 0;
     const totalPages = Math.ceil(totalCount / limit);
+    const meta = { totalPages, totalCount };
+
+    const {
+        isMobile,
+        hasMore,
+        observerTarget,
+        accumulatedList,
+        handleCurrentPage,
+    } = useHandlePagination<IEpics>({
+        incomingData: incomingEpics,
+        meta,
+        isFetching,
+        setCurrentPage,
+        currentPage,
+    });
 
     const getPageNumbers = (current: number, total: number) => {
         if (total <= 5) {
@@ -52,11 +65,11 @@ function EpicList() {
         return [1, '...', current, '...', total];
     };
 
-    const selectedEpic = epics.find((epic) => epic.id === epicId);
+    const displayList = isMobile ? accumulatedList : incomingEpics;
+    const selectedEpic = displayList.find((epic) => epic.id === epicId);
 
-    // Handle States
-    if (isLoading || isFetching) return <LoadingEpics />;
-
+    if (isLoading || (!isMobile && isFetching)) return <LoadingEpics />;
+    if (incomingEpics.length === 0 && !isFetching) return <EmptyEpics />;
     if (isError) {
         return (
             <ErrorState
@@ -65,10 +78,6 @@ function EpicList() {
                 reset={() => refetch()}
             />
         );
-    }
-
-    if (epics.length === 0) {
-        return <EmptyEpics />;
     }
 
     return (
@@ -82,7 +91,8 @@ function EpicList() {
                     <Search placeholder="search epics..." />
                     <LinkButton
                         to={`/project/${projectId}/epics/new`}
-                        className="w-fit! gap-2! hidden lg:flex">
+                        className="w-fit! gap-2! hidden lg:flex"
+                    >
                         <PlusIcon className="text-white w-2.75" />
                         new epic
                     </LinkButton>
@@ -96,68 +106,74 @@ function EpicList() {
                 </div>
             </header>
 
-            {/* Epics Grid */}
+            {/* epic items */}
             <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-10 min-h-90">
-                {epics.map((epic) => (
-                    <EpicItem key={epic.id} epicItem={epic} />
+                {displayList?.map((epic) => (
+                    <EpicItem epicItem={epic} key={epic?.id} />
                 ))}
             </div>
 
-            {/* Pagination Footer */}
-            <footer className="flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center mt-8 pb-10">
+            {/* pagination with footer on desktop */}
+            <footer className="hidden lg:flex flex-col lg:flex-row justify-center items-center gap-6 lg:justify-between lg:items-center mt-8 pb-10">
                 <p className="font-medium text-secondary text-[12px]">
-                    Showing {epics.length} of {totalCount} epics
+                    Showing {incomingEpics?.length} of {meta?.totalCount} active epics
                 </p>
+                {meta?.totalPages > 1 && (
+                    <div className="flex gap-2 items-center">
+                        {/* Previous Button */}
+                        <Button
+                            variant="ghost"
+                            className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! disabled:opacity-50"
+                            disabled={currentPage === 1 || isFetching}
+                            onClick={() => handleCurrentPage(Math.max(currentPage - 1, 1))}
+                        >
+                            <ChevronLeftIcon className="w-1" />
+                        </Button>
 
-                <div className="flex gap-2 items-center">
-                    {/* Previous Button */}
-                    <Button
-                        variant="ghost"
-                        className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! disabled:opacity-50"
-                        disabled={currentPage === 1 || isFetching}
-                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    >
-                        <ChevronLeftIcon className="w-1" />
-                    </Button>
+                        {/* Page Numbers */}
+                        {getPageNumbers(currentPage, meta.totalPages).map((page, idx) =>
+                            typeof page === 'number' ? (
+                                <Button
+                                    key={idx}
+                                    variant="ghost"
+                                    className={`rounded-[2px]! size-[32px]! p-0! font-bold! text-[12px]! ${page === currentPage
+                                        ? 'bg-primary! text-white! border border-primary!'
+                                        : 'bg-[#f4f6fa] text-secondary border-0 hover:bg-slate-light/20'
+                                        }`}
+                                    disabled={isFetching}
+                                    onClick={() => handleCurrentPage(page)}
+                                >
+                                    {page}
+                                </Button>
+                            ) : (
+                                <span
+                                    key={idx}
+                                    className="size-[32px] flex items-center justify-center text-secondary text-[12px] font-bold"
+                                >
+                                    ...
+                                </span>
+                            )
+                        )}
 
-                    {/* Page Numbers */}
-                    {getPageNumbers(currentPage, totalPages).map((page, idx) =>
-                        typeof page === 'number' ? (
-                            <Button
-                                key={idx}
-                                variant="ghost"
-                                className={`rounded-[2px]! size-[32px]! p-0! font-bold! text-[12px]! ${page === currentPage
-                                    ? 'bg-primary! text-white! border border-primary!'
-                                    : 'bg-[#f4f6fa] text-secondary border-0 hover:bg-slate-light/20'
-                                    }`}
-                                disabled={isFetching}
-                                onClick={() => setCurrentPage(page)}
-                            >
-                                {page}
-                            </Button>
-                        ) : (
-                            <span
-                                key={idx}
-                                className="size-[32px] flex items-center justify-center text-secondary text-[12px] font-bold"
-                            >
-                                ...
-                            </span>
-                        )
-                    )}
-
-                    {/* Next Button */}
-                    <Button
-                        variant="ghost"
-                        className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! disabled:opacity-50"
-                        disabled={currentPage >= totalPages || isFetching || totalPages === 0}
-                        onClick={() => setCurrentPage((prev) => prev + 1)}
-                    >
-                        <ChevronRightIcon className="w-1" />
-                    </Button>
-                </div>
+                        {/* Next Button */}
+                        <Button
+                            variant="ghost"
+                            className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! disabled:opacity-50"
+                            disabled={currentPage >= meta.totalPages || isFetching}
+                            onClick={() => handleCurrentPage(currentPage + 1)}
+                        >
+                            <ChevronRightIcon className="w-1" />
+                        </Button>
+                    </div>
+                )}
             </footer>
 
-    
+            {/* loadmore on mobile */}
+            {hasMore && !isFetching && (
+                <div ref={observerTarget} className="mt-auto lg:hidden w-full text-center py-4 text-secondary text-sm font-medium">
+                    Loading More...
+                </div>
+            )}
 
             {selectedEpic && <EpicModal epic={selectedEpic} />}
         </section>
