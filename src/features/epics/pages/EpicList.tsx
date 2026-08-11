@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import LinkButton from "@/shared/LinkButton";
 import PlusIcon from "@/assets/icons/plus.svg?react";
@@ -11,31 +11,33 @@ import LoadingEpics from "../components/LoadingEpics";
 import ErrorState from "@/shared/ErrorState";
 import EmptyEpics from "../components/EmptyEpics";
 import EpicModal from "../components/EpicModal";
-import { useGetEpicsQuery } from "../services/epicsApi";
 import { useHandlePagination } from "@/shared/hooks/useHandlePagination";
 import type { IEpics } from "../types/epics.types";
+import { useAppDispatch, useAppSelector } from "@/shared/store/store";
+import { fetchEpics } from "@/shared/store/slices/epics.slice";
+import { getPaginationRange } from "@/shared/utils/utils";
 
 function EpicList() {
     const { projectId, epicId } = useParams();
+    const dispatch = useAppDispatch();
 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const limit = 6;
 
-    const { data: epics, isLoading, isFetching, isError, error, refetch } = useGetEpicsQuery(
-        {
-            projectId: projectId || "",
-            page: currentPage,
-            limit,
-        },
-        {
-            skip: !projectId,
-            refetchOnMountOrArgChange: true,
-        }
+    const { epics: incomingEpics, totalCount, loading, error } = useAppSelector(
+        (state) => state.epics
     );
 
-    const incomingEpics = epics?.project_epics || [];
-    const totalCount = epics?.totalCount || 0;
-    const totalPages = Math.ceil(totalCount / limit);
+    const isLoading = loading === 'pending';
+    const isError = loading === 'rejected';
+
+    useEffect(() => {
+        if (projectId) {
+            dispatch(fetchEpics({ projectId, page: currentPage, limit }));
+        }
+    }, [projectId, currentPage, dispatch]);
+
+    const totalPages = Math.ceil((totalCount || 0) / limit);
     const meta = { totalPages, totalCount };
 
     const {
@@ -47,41 +49,28 @@ function EpicList() {
     } = useHandlePagination<IEpics>({
         incomingData: incomingEpics,
         meta,
-        isFetching,
+        isFetching: isLoading,
         setCurrentPage,
         currentPage,
     });
 
-    const getPageNumbers = (current: number, total: number) => {
-        if (total <= 5) {
-            return Array.from({ length: total }, (_, i) => i + 1);
-        }
-        if (current <= 3) {
-            return [1, 2, 3, '...', total];
-        }
-        if (current >= total - 2) {
-            return [1, '...', total - 2, total - 1, total];
-        }
-        return [1, '...', current, '...', total];
-    };
-
     const displayList = isMobile ? accumulatedList : incomingEpics;
     const selectedEpic = displayList.find((epic) => epic.id === epicId);
 
-    if (isLoading || (!isMobile && isFetching)) return <LoadingEpics />;
-    if (incomingEpics.length === 0 && !isFetching) return <EmptyEpics />;
+    if (isLoading && currentPage === 1) return <LoadingEpics />;
+    if (incomingEpics.length === 0 && !isLoading) return <EmptyEpics />;
     if (isError) {
         return (
             <ErrorState
                 item="project epics"
-                message={(error as any)?.data?.message || "Failed to load epics"}
-                reset={() => refetch()}
+                message={error || "Failed to load epics"}
+                reset={() => projectId && dispatch(fetchEpics({ projectId, page: currentPage, limit }))}
             />
         );
     }
 
     return (
-        <section>
+        <section className="flex flex-col min-h-screen">
             {/* page header */}
             <header className="lg:justify-between lg:items-center flex gap-4 flex-col lg:flex-row mb-5 lg:mb-10">
                 <h1 className="font-semibold text-slate-dark text-[30px] leading-10 tracking-[-0.9px] capitalize flex-1 w-full">
@@ -124,14 +113,14 @@ function EpicList() {
                         <Button
                             variant="ghost"
                             className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! disabled:opacity-50"
-                            disabled={currentPage === 1 || isFetching}
+                            disabled={currentPage === 1 || isLoading}
                             onClick={() => handleCurrentPage(Math.max(currentPage - 1, 1))}
                         >
                             <ChevronLeftIcon className="w-1" />
                         </Button>
 
                         {/* Page Numbers */}
-                        {getPageNumbers(currentPage, meta.totalPages).map((page, idx) =>
+                        {getPaginationRange(currentPage, meta.totalPages).map((page, idx) =>
                             typeof page === 'number' ? (
                                 <Button
                                     key={idx}
@@ -140,7 +129,7 @@ function EpicList() {
                                         ? 'bg-primary! text-white! border border-primary!'
                                         : 'bg-[#f4f6fa] text-secondary border-0 hover:bg-slate-light/20'
                                         }`}
-                                    disabled={isFetching}
+                                    disabled={isLoading}
                                     onClick={() => handleCurrentPage(page)}
                                 >
                                     {page}
@@ -159,7 +148,7 @@ function EpicList() {
                         <Button
                             variant="ghost"
                             className="text-secondary! rounded-[2px]! size-[32px]! border border-slate-light p-0! font-bold! text-[12px]! disabled:opacity-50"
-                            disabled={currentPage >= meta.totalPages || isFetching}
+                            disabled={currentPage >= meta.totalPages || isLoading}
                             onClick={() => handleCurrentPage(currentPage + 1)}
                         >
                             <ChevronRightIcon className="w-1" />
@@ -169,7 +158,7 @@ function EpicList() {
             </footer>
 
             {/* loadmore on mobile */}
-            {hasMore && !isFetching && (
+            {hasMore && !isLoading && (
                 <div ref={observerTarget} className="mt-auto lg:hidden w-full text-center py-4 text-secondary text-sm font-medium">
                     Loading More...
                 </div>
