@@ -10,6 +10,7 @@ import ProjectsList from "@/features/projects/pages/ProjectsList";
 import MembersList from "@/features/members/pages/MembersList";
 import AddNewEpic from "@/features/epics/pages/AddNewEpic";
 import EpicList from "@/features/epics/pages/EpicList";
+import AddNewTask from "@/features/tasks/pages/AddNewTask";
 
 
 const router = createBrowserRouter([
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
             {
                 path: ":projectId/tasks",
                 element: <div className="p-6">Project Tasks Area</div>,
+            },
+            {
+                path: ":projectId/tasks/new",
+                element: <AddNewTask />,
             },
             {
                 path: ":projectId/members",

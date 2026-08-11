@@ -42,7 +42,7 @@ function EpicModal({ epic, onClose }: IProps) {
                         </Badge>
                         {/* desktop link */}
                         <LinkButton
-                            to=""
+                            to={`/project/${projectId}/tasks/new?epicId=${epic.id}`}
                             variant="ghost"
                             btnClassName="hidden lg:flex bg-transparent! text-primary! font-semibold! leading-5!"
                         >
@@ -60,7 +60,7 @@ function EpicModal({ epic, onClose }: IProps) {
                                 No tasks have been added to this epic yet
                             </p>
                             <LinkButton
-                                to=""
+                                to={`/project/${projectId}/tasks/new?epicId=${epic.id}`}
                                 btnClassName="rounded-sm"
                                 className="px-4! py-1.5! lg:px-5! lg:py-2!"
                             >
