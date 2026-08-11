@@ -4,16 +4,23 @@ import { getAccessToken } from '@/features/auth/utils/auth';
 import { getEpics, getEpicById, updateEpic } from '@/features/epics/services/epics.services';
 import type { TEpicsInput } from '@/features/epics/schemas/epics.schema';
 
-// fetch epics for a project
+interface FetchEpicsArgs {
+  projectId: string;
+  page?: number;
+  limit?: number;
+}
+
+// fetch epics for a project with optional pagination
 export const fetchEpics = createAsyncThunk(
   'epics/fetch',
-  async (projectId: string, { rejectWithValue }) => {
+  async (args: FetchEpicsArgs | string, { rejectWithValue }) => {
     try {
       const token = getAccessToken();
       if (!token) {
         throw new Error('No authenticated user found. Please login.');
       }
-      return await getEpics({ accessToken: token, projectId });
+      const params = typeof args === 'string' ? { projectId: args } : args;
+      return await getEpics({ accessToken: token, ...params });
     } catch (error) {
       return rejectWithValue(
         error instanceof Error ? error.message : 'Unknown error'
@@ -69,6 +76,7 @@ interface IInitialState {
   loading: 'pending' | 'success' | 'rejected';
   error: string | null;
   epics: IEpics[];
+  totalCount: number;
 }
 
 const epicsSlice = createSlice({
@@ -77,11 +85,13 @@ const epicsSlice = createSlice({
     loading: 'pending',
     error: null,
     epics: [],
+    totalCount: 0,
   } as IInitialState,
   reducers: {
     resetEpics: (state) => {
       state.loading = 'pending';
       state.epics = [];
+      state.totalCount = 0;
       state.error = null;
     },
   },
@@ -93,9 +103,13 @@ const epicsSlice = createSlice({
       })
       .addCase(fetchEpics.fulfilled, (state, action) => {
         state.loading = 'success';
-        state.epics = Array.isArray(action.payload)
-          ? action.payload
-          : action.payload?.data || action.payload?.response?.data || [];
+        if (action.payload && typeof action.payload === 'object' && 'data' in action.payload) {
+          state.epics = action.payload.data;
+          state.totalCount = action.payload.totalCount;
+        } else {
+          state.epics = Array.isArray(action.payload) ? action.payload : [];
+          state.totalCount = state.epics.length;
+        }
       })
       .addCase(fetchEpics.rejected, (state, action) => {
         state.loading = 'rejected';
