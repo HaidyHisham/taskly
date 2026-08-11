@@ -36,22 +36,30 @@ export const createEpic = async ({
 export const getEpics = async ({
     projectId,
     accessToken,
+    page,
+    limit,
 }: {
     projectId: string;
     accessToken: string;
+    page?: number;
+    limit?: number;
 }) => {
     try {
-        const response = await fetch(
-            `${BASE_URL}/rest/v1/project_epics?project_id=eq.${projectId}`,
-            {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    apikey: `${API_KEY}`,
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
+        let url = `${BASE_URL}/rest/v1/project_epics?project_id=eq.${projectId}`;
+        if (page !== undefined && limit !== undefined) {
+            const offset = (page - 1) * limit;
+            url += `&limit=${limit}&offset=${offset}`;
+        }
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                apikey: `${API_KEY}`,
+                Authorization: `Bearer ${accessToken}`,
+                Prefer: 'count=exact',
+            },
+        });
 
         if (!response.ok) {
             const result = await response.json();
@@ -59,7 +67,12 @@ export const getEpics = async ({
         }
 
         const data = await response.json();
-        return data;
+        const contentRange = response.headers.get('content-range');
+        const totalCount = contentRange
+            ? parseInt(contentRange.split('/')[1], 10)
+            : Array.isArray(data) ? data.length : 0;
+
+        return { data, totalCount };
     } catch (error) {
         throw new Error(
             error instanceof Error ? error.message : 'Failed to fetch epics'
