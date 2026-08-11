@@ -174,7 +174,7 @@ function EpicDetails({ epic, onClose }: IProps) {
                     <Label
                         htmlFor="description"
                         className="lg:hidden text-label-sm text-secondary uppercase"
-                         activeVariant={errors.description ? 'error' : 'default'}
+                        activeVariant={errors.description ? 'error' : 'default'}
                     >
                         description
                     </Label>
@@ -215,7 +215,7 @@ function EpicDetails({ epic, onClose }: IProps) {
                         <Label
                             htmlFor="assignee_id"
                             className={metaLabelStyle}
-                             activeVariant={errors.assignee_id ? 'error' : 'default'}
+                            activeVariant={errors.assignee_id ? 'error' : 'default'}
                         >
                             assignee
                         </Label>

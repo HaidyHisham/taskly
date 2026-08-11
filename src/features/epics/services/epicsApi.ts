@@ -56,7 +56,7 @@ export const epicsApi = createApi({
                     totalCount,
                 };
             },
-          
+
         }),
     }),
 });

@@ -46,7 +46,7 @@ export const getEpics = async ({
 }) => {
     try {
         let url = `${BASE_URL}/rest/v1/project_epics?project_id=eq.${projectId}`;
-        if (page && limit) {
+        if (page !== undefined && limit !== undefined) {
             const offset = (page - 1) * limit;
             url += `&limit=${limit}&offset=${offset}`;
         }
@@ -71,32 +71,12 @@ export const getEpics = async ({
         const contentRange = response.headers.get('content-range');
         const data = await response.json();
 
-        let totalCount = contentRange
-            ? parseInt(contentRange.split('/')[1], 10)
-            : 0;
+        const rawCount = contentRange ? parseInt(contentRange.split('/')[1], 10) : NaN;
+        const totalCount = !isNaN(rawCount)
+            ? rawCount
+            : Array.isArray(data) ? data.length : 0;
 
- 
-        if (!totalCount || isNaN(totalCount)) {
-            const countResponse = await fetch(
-                `${BASE_URL}/rest/v1/project_epics?project_id=eq.${projectId}&select=id`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        apikey: `${API_KEY}`,
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                }
-            );
-            if (countResponse.ok) {
-                const allItems = await countResponse.json();
-                totalCount = Array.isArray(allItems) ? allItems.length : (Array.isArray(data) ? data.length : 0);
-            } else {
-                totalCount = Array.isArray(data) ? data.length : 0;
-            }
-        }
-
-        return { data: Array.isArray(data) ? data : [], totalCount };
+        return { data, totalCount };
     } catch (error) {
         throw new Error(
             error instanceof Error ? error.message : 'Failed to fetch epics'
