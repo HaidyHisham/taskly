@@ -46,26 +46,29 @@ export const getEpics = async ({
 }) => {
     try {
         let url = `${BASE_URL}/rest/v1/project_epics?project_id=eq.${projectId}`;
-        if (page !== undefined && limit !== undefined) {
+        if (page && limit) {
             const offset = (page - 1) * limit;
             url += `&limit=${limit}&offset=${offset}`;
         }
-
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                apikey: `${API_KEY}`,
-                Authorization: `Bearer ${accessToken}`,
-                Prefer: 'count=exact',
-            },
-        });
+        const response = await fetch(
+            url,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    apikey: `${API_KEY}`,
+                    Authorization: `Bearer ${accessToken}`,
+                    Prefer: 'count=exact',
+                },
+            }
+        );
 
         if (!response.ok) {
             const result = await response.json();
             throw new Error(result?.message || 'Failed to fetch epics');
         }
 
+        const contentRange = response.headers.get('content-range');
         const data = await response.json();
         const contentRange = response.headers.get('content-range');
         const totalCount = contentRange
