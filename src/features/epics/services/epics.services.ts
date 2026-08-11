@@ -46,7 +46,7 @@ export const getEpics = async ({
 }) => {
     try {
         let url = `${BASE_URL}/rest/v1/project_epics?project_id=eq.${projectId}`;
-        if (page && limit) {
+        if (page !== undefined && limit !== undefined) {
             const offset = (page - 1) * limit;
             url += `&limit=${limit}&offset=${offset}`;
         }
@@ -70,9 +70,10 @@ export const getEpics = async ({
 
         const contentRange = response.headers.get('content-range');
         const data = await response.json();
-        const contentRange = response.headers.get('content-range');
-        const totalCount = contentRange
-            ? parseInt(contentRange.split('/')[1], 10)
+
+        const rawCount = contentRange ? parseInt(contentRange.split('/')[1], 10) : NaN;
+        const totalCount = !isNaN(rawCount)
+            ? rawCount
             : Array.isArray(data) ? data.length : 0;
 
         return { data, totalCount };
