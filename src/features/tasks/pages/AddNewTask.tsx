@@ -1,3 +1,4 @@
+import AddTaskForm from "../components/AddTaskForm";
 
 export default function AddNewTask() {
     return (
@@ -9,7 +10,7 @@ export default function AddNewTask() {
                 <p className="max-w-full lg:max-w-2/3 2xl:max-w-1/2 text-secondary text-sm">Initialize a new work item within the Architectural Workspace ecosystem.</p>
 
             </header>
-
+            <AddTaskForm />
 
         </section>
     );

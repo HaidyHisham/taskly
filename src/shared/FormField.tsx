@@ -88,7 +88,7 @@ const FormField = <TFieldValues extends FieldValues = FieldValues>(
             if (onChange) onChange(e);
           }}
           inputClassName={`${isEditing ? inputStyle : ''} ${isEditing ? inputClassName : ''}`}
-          rows={2}
+          rows={4}
           {...restHtmlProps}
           className={`${isEditing ? containerStyle : ''} ${restHtmlProps.className}`}
         />
