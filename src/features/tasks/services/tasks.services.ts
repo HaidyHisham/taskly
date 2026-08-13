@@ -7,7 +7,7 @@ export const createTask = async ({
   data,
   accessToken,
 }: {
-   data: TTaskInput & { project_id: string };
+  data: TTaskInput & { project_id: string };
   accessToken: string;
 }) => {
   try {

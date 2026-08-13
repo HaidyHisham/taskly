@@ -58,6 +58,8 @@
   /*14px*/
   --label: 0.6875rem;
   /*11px*/
+  --body-xs: 0.5rem;
+  /*8px*/
 
   /* border radius */
   --rounded-2px: 0.125rem;
@@ -103,6 +105,7 @@
   --text-heading-3: var(--heading-3);
   --text-body: var(--body);
   --text-label: var(--label);
+  --text-body-xs: var(--body-xs);
 
   /* border-radius */
   --radius-2px: var(--rounded-2px);
@@ -140,6 +143,12 @@
 
 @utility text-label-sm {
   @apply text-label font-bold leading-[16.5px] tracking-[1.1px];
+}
+@utility text-body-xs {
+  font-size: var(--body-xs);
+  font-weight: 700;
+  line-height: 12.75px;
+  letter-spacing: normal;
 }
 
 @utility primary-gradient {
