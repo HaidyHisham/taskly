@@ -2,8 +2,8 @@ import { formateDateString, getDueDateStatus, getNameInitials } from "@/shared/u
 import type { ITask } from "../../tasks/types/tasks.types";
 
 import UnassignedIcon from '@/assets/icons/unassign.svg?react';
-import CalenderIcon from '@/assets/icons/calendar.svg?react';
-import AlertIcon from '@/assets/icons/Alert.svg?react';
+import CalenderIcon from '@/assets/icons/Calendar.svg?react';
+import AlertIcon from '@/assets/icons/alert.svg?react';
 import UserAvatar from "@/shared/UserAvatar";
 
 interface Props {
