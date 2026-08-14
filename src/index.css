@@ -22,6 +22,7 @@
   --slate-medium: #4F5F7B;
   --slate-light: #C3C8D6;
   --slate-lighter: #E8EDFF;
+  --accent : #64748B;
 
   /* Semantic Colors */
   --success: #52F7B5;
@@ -86,11 +87,13 @@
   --color-initials-bg: var(--initials-bg);
 
 
+
   /* Slate slates */
   --color-slate-dark: var(--slate-dark);
   --color-slate-medium: var(--slate-medium);
   --color-slate-light: var(--slate-light);
   --color-slate-lighter: var(--slate-lighter);
+  --color-accent: var(--accent);
 
   /* Semantic Colors */
   --color-success: var(--success);

@@ -3,14 +3,14 @@ import { useForm } from 'react-hook-form';
 import FormField from '@/shared/FormField'
 import Label from '@/shared/Label'
 import { zodResolver } from '@hookform/resolvers/zod';
-import { taskSchema, type TTaskInput } from '../schemas/task.schema';
+import { taskSchema, type TTaskInput } from '../../schemas/task.schema';
 import Button from '@/shared/Button';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { TASK_STATUS_OPTIONS, type TaskStatus } from '../types/tasks.types';
+import { TASK_STATUS_OPTIONS, type TaskStatus } from '../../types/tasks.types';
 import { useAppDispatch, useAppSelector } from '@/shared/store/store';
 import { fetchMembers } from '@/shared/store/slices/members.slice';
 import { fetchEpics } from '@/shared/store/slices/epics.slice';
-import { createTask } from '../services/tasks.services';
+import { createTask } from '../../services/tasks.services';
 import { getAccessToken } from '@/features/auth/utils/auth';
 import { toast } from 'react-toastify';
 
