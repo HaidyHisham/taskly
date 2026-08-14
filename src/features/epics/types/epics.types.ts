@@ -1,3 +1,5 @@
+import type { ITask } from '@/features/tasks/types/tasks.types';
+
 export interface IEpics {
   id: string;
   project_id: string;
@@ -18,4 +20,5 @@ export interface IEpics {
     email: string;
     department: string | null;
   };
+  tasks?: ITask[];
 }
