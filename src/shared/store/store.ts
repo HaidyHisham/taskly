@@ -4,6 +4,7 @@ import authReducer from '@/shared/store/slices/auth.slice';
 import projectReducer from '@/shared/store/slices/project.slice';
 import membersReducer from '@/shared/store/slices/members.slice';
 import epicsReducer from '@/shared/store/slices/epics.slice';
+import tasksReducer from '@/shared/store/slices/tasks.slice';
 import { epicsApi } from '@/features/epics/services/epicsApi';
 
 export const makeStore = () => {
@@ -13,6 +14,7 @@ export const makeStore = () => {
       project: projectReducer,
       members: membersReducer,
       epics: epicsReducer,
+      tasks: tasksReducer,
       [epicsApi.reducerPath]: epicsApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
