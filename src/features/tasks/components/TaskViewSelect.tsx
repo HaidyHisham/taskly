@@ -2,35 +2,41 @@ import { useSearchParams } from 'react-router-dom';
 import Select from 'react-select';
 import BoardIcon from '@/assets/icons/board.svg?react';
 import ListIcon from '@/assets/icons/list.svg?react';
+import type { ReactNode } from 'react';
 
-const TaskViewSelect = () => {
+type TaskView = 'board' | 'list';
+
+const options: { label: string; value: TaskView; icon: ReactNode }[] = [
+  {
+    label: 'Board View',
+    value: 'board',
+    icon: <BoardIcon className="text-slate-dark w-3.5" />,
+  },
+  {
+    label: 'List View',
+    value: 'list',
+    icon: <ListIcon className="text-primary w-2.75" />,
+  },
+];
+
+interface Props {
+  className?: string;
+}
+
+const TaskViewSelect = ({ className }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentTasksView = searchParams.get('view') || 'board';
+  const currentTasksView = (searchParams.get('view') as TaskView) || 'board';
 
-  const handleViewChange = (value: string) => {
+  const handleViewChange = (value: TaskView) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('view', value);
-    newSearchParams.delete('page');
     setSearchParams(newSearchParams);
   };
-
-  const options = [
-    {
-      label: 'Board View',
-      value: 'board',
-      icon: <BoardIcon className="text-slate-dark w-3.5" />,
-    },
-    {
-      label: 'List View',
-      value: 'list',
-      icon: <ListIcon className="text-primary w-2.75" />,
-    },
-  ];
 
   return (
     <Select
       options={options}
-      className="w-44"
+      className={className ?? "w-44"}
       classNamePrefix="custom"
       isSearchable={false}
       value={options.find((option) => option.value === currentTasksView) || options[0]}
