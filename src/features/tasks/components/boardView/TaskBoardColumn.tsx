@@ -10,15 +10,9 @@ import { fetchTasksByStatus } from "@/shared/store/slices/tasks.slice";
 
 interface Props {
     status: TaskStatus;
-    tasks?: ITask[];
 }
 
-const statusColor: {
-    [key: string]: {
-        dotBackgroundColor: string;
-        lengthClassName?: string;
-    };
-} = {
+const statusColor: Record<TaskStatus, { dotBackgroundColor: string; lengthClassName?: string }> = {
     [TASK_STATUS.TODO]: {
         dotBackgroundColor: 'bg-accent',
         lengthClassName: 'bg-surface-md text-secondary',
@@ -58,27 +52,26 @@ const formateTaskStatus = (status: string) => {
     return status.replace(/_/g, ' ');
 };
 
-function TaskBoardColumn({ status, tasks: propTasks }: Props) {
+
+
+function TaskBoardColumn({ status }: Props) {
     const { projectId } = useParams();
     const dispatch = useAppDispatch();
     const columnData = useAppSelector((state) => state.tasks.tasksByStatus?.[status]);
 
     useEffect(() => {
-        if (projectId && !propTasks) {
+        if (projectId) {
             dispatch(fetchTasksByStatus({ projectId, status }));
         }
-    }, [projectId, status, propTasks, dispatch]);
+    }, [projectId, status,dispatch]);
 
-    const columnTasks = propTasks ? propTasks.filter((t) => t.status === status) : columnData?.tasks || [];
-    const isLoading = !propTasks && columnData?.loading === 'pending';
-    const isError = !propTasks && columnData?.loading === 'rejected';
+    const columnTasks = columnData?.tasks || [];
+    const isLoading = columnData?.loading === 'pending';
+    const isError = columnData?.loading === 'rejected';
     const errorMessage = columnData?.error;
     const taskCount = columnTasks.length;
 
     const displayedStatusTitle = formateTaskStatus(status);
-    const to = status
-        ? `/project/${projectId}/tasks/new?status=${status}`
-        : `/project/${projectId}/tasks/new`;
 
     return (
        <div className="flex flex-col gap-4 min-w-64 h-full">
@@ -95,13 +88,13 @@ function TaskBoardColumn({ status, tasks: propTasks }: Props) {
                         <span>{taskCount}</span>
                     </div>
                 </div>
-                <LinkButton to={to} variant="ghost" className="w-fit p-0.5">
+                <LinkButton to={`/project/${projectId}/tasks/new?status=${status}`} variant="ghost" className="w-fit p-0.5">
                     <PlusIcon className="w-2.75 text-secondary" />
                 </LinkButton>
             </div>
             {/* add task link */}
             <LinkButton
-                to={to}
+                to={`/project/${projectId}/tasks/new?status=${status}`}
                 variant="ghost"
                 className="border-2 border-slate-light/40 border-dashed p-4! w-full! gap-2! rounded-sm"
             >
@@ -111,7 +104,7 @@ function TaskBoardColumn({ status, tasks: propTasks }: Props) {
                 </span>
             </LinkButton>
             {/* cards */}
-          <div className="w-full flex flex-col gap-4 overflow-y-auto flex-1">
+          <div className="w-full flex flex-col gap-4 overflow-y-auto flex-1 min-h-0">
                 {isLoading && (
                     <div className="text-body-xs text-secondary/60 py-3 text-center animate-pulse">
                         Loading tasks...
@@ -122,8 +115,10 @@ function TaskBoardColumn({ status, tasks: propTasks }: Props) {
                         {errorMessage || 'Failed to load tasks'}
                     </div>
                 )}
-                {!isLoading && !isError && columnTasks.map((task, indx) => {
-                    return <TaskBoardCard key={`${task.id}-${indx}`} task={task} />;
+                {!isLoading && !isError && columnTasks.map((task) => {
+                    return (
+                        <TaskBoardCard key={task.id} task={task} />
+                    );
                 })}
             </div>
         </div>

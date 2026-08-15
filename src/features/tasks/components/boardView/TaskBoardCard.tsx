@@ -45,7 +45,7 @@ function TaskBoardCard({ task }: Props) {
         </div>
         <UserAvatar
           className={`border border-white size-6! rounded-full! ms-auto ${isDueToday ? 'text-white! bg-primary-container!' : 'bg-surface-md! text-slate-dark!'}`}
-          content={getNameInitials(task?.assignee?.name)}
+         content={getNameInitials(task?.assignee?.name) || '—'}
         />
       </div>
     </div>
