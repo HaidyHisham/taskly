@@ -5,13 +5,15 @@ interface IProps {
   children: React.ReactNode;
   to: string;
   className?: string;
+  btnClassName?: string;
   variant?: 'primary' | 'secondary' | 'ghost' | 'tertiay';
 }
 
 const LinkButton: React.FC<IProps> = ({
   children,
   to,
-  className,
+  className = '',
+  btnClassName = '',
   variant = 'primary',
 }) => {
   const linkVariant = {
@@ -25,7 +27,7 @@ const LinkButton: React.FC<IProps> = ({
   return (
     <Link
       to={to}
-      className={`px-6 py-3 text-body leading-5 flex items-center justify-center gap-1.75 capitalize cursor-pointer font-medium ${linkVariant[variant]} ${className}`}
+      className={`px-6 py-3 text-body leading-5 flex items-center justify-center gap-1.75 capitalize cursor-pointer font-medium ${linkVariant[variant]} ${className} ${btnClassName}`}
     >
       {children}
     </Link>
