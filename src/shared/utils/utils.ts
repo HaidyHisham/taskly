@@ -10,12 +10,20 @@ export const getNameInitials = (name: string) => {
 };
 
 //  ------------------------ formate date ------------------------
-export const formateDateString = (date: string, type: string = 'en-GB') => {
-  return new Date(date).toLocaleDateString(type, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+export const formateDateString = (
+  date: string,
+  type: string = 'en-GB',
+  options?: Intl.DateTimeFormatOptions
+) => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString(
+    type,
+    options || {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }
+  );
 };
 //  -------------------------- get date status --------------------------
 export const getDueDateStatus = (dueDate?: string) => {

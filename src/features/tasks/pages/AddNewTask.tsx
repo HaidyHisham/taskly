@@ -1,4 +1,4 @@
-import AddTaskForm from "../components/AddTaskForm";
+import AddTaskForm from "../components/addTask/AddTaskForm";
 
 export default function AddNewTask() {
     return (
