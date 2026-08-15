@@ -30,7 +30,7 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
     if (!dueDate) return '--';
     if (isDueToday) return 'TODAY';
     if (isDelayed) return 'OVERDUE';
-    return formattedDate?.toUpperCase() || '--';
+   return formattedDate || '--';
   };
 
   const desktopView = (
@@ -64,13 +64,12 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
         <div className="flex items-center gap-1.5">
           {getStatusIcon(isDelayed, isDueToday, false)}
           <span
-            className={`font-semibold text-body-sm leading-4 uppercase ${
-              isDelayed
+            className={`font-semibold text-body-sm leading-4  ${isDelayed
                 ? 'text-error'
                 : isDueToday
                   ? 'text-primary font-bold'
                   : 'text-slate-dark/70'
-            }`}
+              }`}
           >
             {getDueDateLabel(task?.due_date, isDueToday, isDelayed, formatedDueDate)}
           </span>
@@ -105,13 +104,12 @@ const EpicTaskItem: React.FC<Props> = ({ task }) => {
         <div className="flex gap-1.5 items-center">
           {getStatusIcon(isDelayed, isDueToday, true)}
           <span
-            className={`font-semibold text-label leading-4 uppercase ${
-              isDelayed
+            className={`font-semibold text-label leading-4  ${isDelayed
                 ? 'text-error'
                 : isDueToday
                   ? 'text-primary font-bold'
                   : 'text-secondary/70'
-            }`}
+              }`}
           >
             {getDueDateLabel(task?.due_date, isDueToday, isDelayed, formatedDueDate)}
           </span>
