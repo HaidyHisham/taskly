@@ -14,25 +14,30 @@ import { createTask } from '../../services/tasks.services';
 import { getAccessToken } from '@/features/auth/utils/auth';
 import { toast } from 'react-toastify';
 
+function truncateText(text: string, maxLength: number): string {
+    if (!text || text.length <= maxLength) return text;
+    return `${text.slice(0, maxLength)}...`;
+}
+
 function AddTaskForm() {
     const { projectId } = useParams();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
     const selectedStatus = (searchParams.get('status') || 'TO_DO') as TaskStatus;
-    const selectedEpicId = searchParams.get('epic') || searchParams.get('epicId') || '';
+    const selectedEpicId = searchParams.get('epicId') || '';
     const [isLoading, setIsLoading] = useState(false);
 
     const dispatch = useAppDispatch();
     const projectMembers = useAppSelector((state) => state.members.members);
     const projectEpics = useAppSelector((state) => state.epics.epics);
 
-    useEffect(() => {
-        if (projectId) {
-            dispatch(fetchMembers(projectId));
-            dispatch(fetchEpics({ projectId }));
-        }
-    }, [projectId, dispatch]);
+  useEffect(() => {
+    if (projectId) {
+        dispatch(fetchMembers(projectId));
+        dispatch(fetchEpics({ projectId }));
+    }
+}, [projectId, dispatch]);
 
     const membersOptions = [
         { value: '', label: 'Unassigned' },
@@ -42,14 +47,14 @@ function AddTaskForm() {
         })) || []),
     ];
 
-    const epicsOptions = [
-        { value: '', label: 'None' },
-        ...(projectEpics?.map((epic) => ({
-            value: epic.id,
-            label: epic.title,
-        })) || []),
-    ];
 
+const epicsOptions = [
+    { value: '', label: 'None' },
+    ...(projectEpics?.map((epic) => ({
+        value: epic.id,
+        label: `${epic.epic_id} ${truncateText(epic.title, 100)}`,
+    })) || []),
+];
     const {
         handleSubmit,
         control,
@@ -93,9 +98,10 @@ function AddTaskForm() {
             toast.success('Task created successfully!');
             reset();
             navigate(`/project/${projectId}/tasks`);
-        } catch (error: any) {
-            toast.error(error?.message || 'Failed to create task');
-        } finally {
+       } catch (error) {
+    toast.error(error instanceof Error ? error.message : 'Failed to create task');
+}
+       finally {
             setIsLoading(false);
         }
     };

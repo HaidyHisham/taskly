@@ -10,7 +10,7 @@ interface Props {
   task: ITask;
 }
 
-const EpicTaskItem: React.FC<Props> = ({ task }) => {
+const EpicTaskItem = ({ task }: Props) => {
   const { isDelayed, isDueToday } = getDueDateStatus(task?.due_date);
   const assigneeInitials = getNameInitials(task?.assignee?.name);
   const formatedDueDate = formateDateString(task?.due_date);

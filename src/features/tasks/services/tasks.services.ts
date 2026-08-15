@@ -31,10 +31,10 @@ export const createTask = async ({
       body: JSON.stringify(formData),
     });
 
-    if (response.status !== 201 && !response.ok) {
-      const result = await response.json().catch(() => ({}));
-      throw new Error(result?.message || 'Failed to create task');
-    }
+   if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result?.message || 'Failed to create task');
+}
   } catch (error) {
     const errMsg =
       error instanceof Error ? error.message : 'Failed to create task';

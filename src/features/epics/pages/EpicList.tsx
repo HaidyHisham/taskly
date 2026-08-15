@@ -164,7 +164,7 @@ function EpicList() {
                 </div>
             )}
 
-            {selectedEpic && <EpicModal epic={selectedEpic} />}
+            {selectedEpic && <EpicModal key={selectedEpic?.id} epic={selectedEpic} />}
         </section>
     );
 }
