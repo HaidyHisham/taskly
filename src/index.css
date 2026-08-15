@@ -28,6 +28,7 @@
   --success: #52F7B5;
   --success-mint: #82F9BE;
   --error: #B71C1C;
+  --error-container: #FFDAD6;
   --warning: #FFB300;
   --success-dark:#65DCA4;
   --green-dark:#005235;
@@ -99,6 +100,7 @@
   --color-success: var(--success);
   --color-success-mint: var(--success-mint);
   --color-error: var(--error);
+  --color-error-container: var(--error-container);
   --color-warning: var(--warning);
   --color-success-dark: var(--success-dark);
 

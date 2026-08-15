@@ -66,3 +66,39 @@ export const getEpicTasks = async (epicId: string, accessToken?: string): Promis
     throw new Error(errMsg);
   }
 };
+
+export const getTasksByStatus = async ({
+  projectId,
+  status,
+  accessToken,
+}: {
+  projectId: string;
+  status: string;
+  accessToken?: string;
+}): Promise<ITask[]> => {
+  try {
+    const token = accessToken || getAccessToken();
+    const response = await fetch(
+      `${BASE_URL}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: `${API_KEY}`,
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const result = await response.json().catch(() => ({}));
+      throw new Error(result?.message || 'Failed to load tasks');
+    }
+
+    const tasks = await response.json();
+    return tasks || [];
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : 'Failed to load tasks';
+    throw new Error(errMsg);
+  }
+};
