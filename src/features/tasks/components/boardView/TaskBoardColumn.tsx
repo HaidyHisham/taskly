@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { TASK_STATUS, type TaskStatus, type ITask } from "../../types/tasks.types";
+import { TASK_STATUS, type TaskStatus } from "../../types/tasks.types";
 import LinkButton from "@/shared/LinkButton";
 import PlusIcon from "@/assets/icons/plus.svg?react";
 import PlusBorderIcon from "@/assets/icons/plusborder.svg?react";
