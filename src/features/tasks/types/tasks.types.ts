@@ -11,6 +11,7 @@ export const TASK_STATUS = {
 
 export type TaskStatus = (typeof TASK_STATUS)[keyof typeof TASK_STATUS];
 
+
 export const TASK_STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
   { value: 'TO_DO', label: 'TO DO' },
   { value: 'IN_PROGRESS', label: 'IN PROGRESS' },

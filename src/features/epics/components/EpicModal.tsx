@@ -35,7 +35,7 @@ function EpicModal({ epic, onClose }: IProps) {
 
     return (
         <section
-            className="fixed inset-s-0 inset-e-0 top-0 bottom-0 z-9999999 h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center cursor-pointer"
+            className="fixed inset-s-0 inset-e-0 top-0 bottom-0 z-[9999999] h-screen bg-slate-dark/20 p-4 lg:p-8 flex items-center justify-center cursor-pointer"
             onClick={handleClose}
         >
             <div
