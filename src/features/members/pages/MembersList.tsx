@@ -5,15 +5,18 @@ import MemberDetails from "../components/MemberDetails";
 import LoadingMembers from "../components/LoadingMembers";
 import ErrorState from "@/shared/ErrorState";
 import { useAppDispatch, useAppSelector } from "@/shared/store/store";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchMembers, resetMembers } from "@/shared/store/slices/members.slice";
+import InviteMemberModal from "../components/InviteMemberModal";
 
 const MembersList = () => {
     const { members, loading, error } = useAppSelector((state) => state.members);
     const dispatch = useAppDispatch();
     const { projectId } = useParams();
     const { isMobile } = useMobile(768);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const isInviteMemberModalOpen = searchParams.get('invite-member');
 
     const handleRetry = () => {
         if (projectId) {
@@ -81,6 +84,18 @@ const MembersList = () => {
         </div>
     );
 
+    const handleOpenInviteModal = () => {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set('invite-member', 'true');
+        setSearchParams(newParams);
+    };
+
+    const handleCloseInviteModal = () => {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('invite-member');
+        setSearchParams(newParams);
+    };
+
     return (
         <section>
             {/* page header */}
@@ -88,15 +103,17 @@ const MembersList = () => {
                 <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 text-center lg:text-start w-full">
                     project members
                 </h1>
-                <Button className="w-fit! gap-2! hidden lg:flex">
+                <Button className="w-fit! gap-2! hidden lg:flex" onClick={handleOpenInviteModal}>
                     <InviteMemeberIcon className="text-white w-4.5" />
                     Invite member
                 </Button>
             </header>
             {/* members */}
             {isMobile ? mobileMembersView : desktopMembersView}
+            {isInviteMemberModalOpen && (
+                <InviteMemberModal onClose={handleCloseInviteModal} />
+            )}
         </section>
-
     );
 
 };
