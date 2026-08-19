@@ -4,7 +4,7 @@ import Title from "@/shared/Title"
 import { loginSchema, type TLoginInput } from "../../schemas/login.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type SubmitHandler } from "react-hook-form"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { loginService } from "../../services/login.services"
 import { toast } from "react-toastify"
 import { useState } from "react"
@@ -14,6 +14,8 @@ import { setAccessToken, setRefreshToken, setUserData } from "@/features/auth/ut
 
 function LoginForm() {
     const [isLoading, setIsLoading] = useState(false)
+    const [searchParams] = useSearchParams()
+    const redirectUrl = searchParams.get("redirect") || searchParams.get("redirectTo") || "/project"
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const {
@@ -58,7 +60,7 @@ function LoginForm() {
                         user: userObj,
                     })
                 );
-                navigate("/project");
+                navigate(redirectUrl);
             }
             reset();
 

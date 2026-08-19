@@ -12,13 +12,18 @@ import AddNewEpic from "@/features/epics/pages/AddNewEpic";
 import EpicList from "@/features/epics/pages/EpicList";
 import AddNewTask from "@/features/tasks/pages/AddNewTask";
 import TaskBoard from "@/features/tasks/components/boardView/TaskBoard";
-
+import AcceptMemberInvitation from "@/features/members/components/AcceptMemberInvitation";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Navigate to={isAuthenticated() ? "/project" : "/login"} replace />,
     },
+    {
+        path: "/invite",
+        element: <AcceptMemberInvitation />,
+    },
+  
     {
         path: "/sign-up",
         element: <SignUpPage />,

@@ -5,15 +5,20 @@ import MemberDetails from "../components/MemberDetails";
 import LoadingMembers from "../components/LoadingMembers";
 import ErrorState from "@/shared/ErrorState";
 import { useAppDispatch, useAppSelector } from "@/shared/store/store";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchMembers, resetMembers } from "@/shared/store/slices/members.slice";
+import InviteMemberModal from "../components/InviteMemberModal";
+import MemberCard from "../components/MemberCard";
+
 
 const MembersList = () => {
     const { members, loading, error } = useAppSelector((state) => state.members);
     const dispatch = useAppDispatch();
     const { projectId } = useParams();
     const { isMobile } = useMobile(768);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const isInviteMemberModalOpen = searchParams.get('invite-member');
 
     const handleRetry = () => {
         if (projectId) {
@@ -41,45 +46,51 @@ const MembersList = () => {
         );
     }
 
-   if (loading === 'pending') {
-    return <LoadingMembers />;
-  }
+    if (loading === 'pending' && members.length === 0) {
+        return <LoadingMembers />;
+    }
 
-    const desktopMembersView = (
-        <table className="w-full hidden md:table table-fixed border-collapse rounded-lg overflow-hidden lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto">
-            <thead>
-                <tr className="bg-surface-md/30 text-left">
-                    <th className="w-1/2 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
-                        Member
-                    </th>
+const desktopMembersView = (
+    <table className="w-full hidden md:table table-fixed border-collapse rounded-lg overflow-hidden lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto">
+        <thead>
+            <tr className="bg-surface-md/30 text-left">
+                <th className="w-1/2 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
+                    Member
+                </th>
+                <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold text-center">
+                    Role
+                </th>
+                <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
+                    actions
+                </th>
+            </tr>
+        </thead>
+      <tbody>
+    {members.map((member) => (
+        <MemberDetails key={member?.member_id} member={member} />
+    ))}
+</tbody>
+    </table>
+);
+const mobileMembersView = (
+    <div className="flex md:hidden flex-col gap-3">
+        {members.map((member) => (
+            <MemberCard key={member?.member_id} member={member} />
+        ))}
+    </div>
+);
 
-                    <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold text-center">
-                        Role
-                    </th>
+    const handleOpenInviteModal = () => {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set('invite-member', 'true');
+        setSearchParams(newParams);
+    };
 
-                    <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row">
-
-                    {members.map((member) => (
-                        <MemberDetails key={member?.member_id} member={member} />
-                    ))}
-
-                </tr>
-            </tbody>
-        </table>
-
-    );
-
-    const mobileMembersView = (
-        <div className="flex md:hidden flex-col gap-3">
-            {members.map((member) => (
-                <MemberDetails key={member?.member_id} member={member} />
-            ))}
-        </div>
-    );
+    const handleCloseInviteModal = () => {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('invite-member');
+        setSearchParams(newParams);
+    };
 
     return (
         <section>
@@ -88,15 +99,17 @@ const MembersList = () => {
                 <h1 className="font-semibold text-[36px] leading-10 tracking-[-0.9px] capitalize flex-1 text-center lg:text-start w-full">
                     project members
                 </h1>
-                <Button className="w-fit! gap-2! hidden lg:flex">
+                <Button className="w-fit! gap-2! hidden lg:flex" onClick={handleOpenInviteModal}>
                     <InviteMemeberIcon className="text-white w-4.5" />
                     Invite member
                 </Button>
             </header>
             {/* members */}
             {isMobile ? mobileMembersView : desktopMembersView}
+            {isInviteMemberModalOpen && (
+                <InviteMemberModal isOpen={Boolean(isInviteMemberModalOpen)} onClose={handleCloseInviteModal} />
+            )}
         </section>
-
     );
 
 };
