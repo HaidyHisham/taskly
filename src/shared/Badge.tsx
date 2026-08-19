@@ -10,7 +10,7 @@ const Badge = ({ children, className }: IProps) => {
     <div
       className={`px-3 py-1 rounded-sm uppercase w-fit font-bold text-[10px] leading-3.75 ${className}`}
     >
-      <span>{children}</span>
+      {children}
     </div>
   );
 };
