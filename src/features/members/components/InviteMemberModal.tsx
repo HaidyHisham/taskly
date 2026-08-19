@@ -45,11 +45,7 @@ function InviteMemberModal({ isOpen: propIsOpen, onClose }: IProps) {
         </div>
     );
 
-    useEffect(() => {
-        if (!isOpen) {
-            setIsSuccess(false);
-        }
-    }, [isOpen]);
+   
 
     const {
         control,
