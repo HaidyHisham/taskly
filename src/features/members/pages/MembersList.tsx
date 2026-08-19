@@ -9,6 +9,8 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchMembers, resetMembers } from "@/shared/store/slices/members.slice";
 import InviteMemberModal from "../components/InviteMemberModal";
+import MemberCard from "../components/MemberCard";
+
 
 const MembersList = () => {
     const { members, loading, error } = useAppSelector((state) => state.members);
@@ -44,45 +46,39 @@ const MembersList = () => {
         );
     }
 
-    if (loading === 'pending') {
+    if (loading === 'pending' && members.length === 0) {
         return <LoadingMembers />;
     }
 
-    const desktopMembersView = (
-        <table className="w-full hidden md:table table-fixed border-collapse rounded-lg overflow-hidden lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto">
-            <thead>
-                <tr className="bg-surface-md/30 text-left">
-                    <th className="w-1/2 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
-                        Member
-                    </th>
-
-                    <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold text-center">
-                        Role
-                    </th>
-
-                    <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr className="w-full bg-white border-b border-b-slate-lighter last:border-0 hidden md:table-row">
-
-                    {members.map((member) => (
-                        <MemberDetails key={member?.member_id} member={member} />
-                    ))}
-
-                </tr>
-            </tbody>
-        </table>
-
-    );
-
-    const mobileMembersView = (
-        <div className="flex md:hidden flex-col gap-3">
-            {members.map((member) => (
-                <MemberDetails key={member?.member_id} member={member} />
-            ))}
-        </div>
-    );
+const desktopMembersView = (
+    <table className="w-full hidden md:table table-fixed border-collapse rounded-lg overflow-hidden lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto">
+        <thead>
+            <tr className="bg-surface-md/30 text-left">
+                <th className="w-1/2 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
+                    Member
+                </th>
+                <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold text-center">
+                    Role
+                </th>
+                <th className="w-1/4 uppercase text-label-sm text-secondary px-12 py-5 font-semibold">
+                    actions
+                </th>
+            </tr>
+        </thead>
+      <tbody>
+    {members.map((member) => (
+        <MemberDetails key={member?.member_id} member={member} />
+    ))}
+</tbody>
+    </table>
+);
+const mobileMembersView = (
+    <div className="flex md:hidden flex-col gap-3">
+        {members.map((member) => (
+            <MemberCard key={member?.member_id} member={member} />
+        ))}
+    </div>
+);
 
     const handleOpenInviteModal = () => {
         const newParams = new URLSearchParams(searchParams);
