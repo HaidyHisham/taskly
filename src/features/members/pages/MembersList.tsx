@@ -44,9 +44,9 @@ const MembersList = () => {
         );
     }
 
-   if (loading === 'pending') {
-    return <LoadingMembers />;
-  }
+    if (loading === 'pending') {
+        return <LoadingMembers />;
+    }
 
     const desktopMembersView = (
         <table className="w-full hidden md:table table-fixed border-collapse rounded-lg overflow-hidden lg:max-w-5/6 xl:max-w-3/4 lg:mx-auto">
@@ -111,7 +111,7 @@ const MembersList = () => {
             {/* members */}
             {isMobile ? mobileMembersView : desktopMembersView}
             {isInviteMemberModalOpen && (
-                <InviteMemberModal onClose={handleCloseInviteModal} />
+                <InviteMemberModal isOpen={Boolean(isInviteMemberModalOpen)} onClose={handleCloseInviteModal} />
             )}
         </section>
     );
